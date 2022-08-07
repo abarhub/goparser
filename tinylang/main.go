@@ -10,131 +10,6 @@ import (
 	"strconv"
 )
 
-//type Visitor struct {
-//	parser.BaseTinylangVisitor
-//	stack []int
-//}
-
-//func NewVisitor() *Visitor {
-//	return &Visitor{}
-//}
-//
-//func (l *Visitor) push(i int) {
-//	l.stack = append(l.stack, i)
-//}
-//
-//func (l *Visitor) pop() int {
-//	if len(l.stack) < 1 {
-//		panic("stack is empty unable to pop")
-//	}
-//
-//	// Get the last value from the stack.
-//	result := l.stack[len(l.stack)-1]
-//
-//	// Remove the last element from the stack.
-//	l.stack = l.stack[:len(l.stack)-1]
-//
-//	return result
-//}
-//
-//func (l *Visitor) length() int {
-//	return len(l.stack)
-//}
-//
-//func (v *Visitor) visitRule(node antlr.RuleNode) interface{} {
-//	node.Accept(v)
-//	return nil
-//}
-//
-//func (v *Visitor) VisitStart(ctx *parser.StartContext) interface{} {
-//	v.visitRule(ctx.GetRuleContext())
-//	return "abc"
-//}
-//
-//func (v *Visitor) VisitNumber(ctx *parser.NumberContext) interface{} {
-//	i, err := strconv.Atoi(ctx.NUMBER().GetText())
-//	if err != nil {
-//		panic(err.Error())
-//	}
-//
-//	v.push(i)
-//	return nil
-//}
-//
-//func (v *Visitor) VisitMulDiv(ctx *parser.MulDivContext) interface{} {
-//	//push expression result to stack
-//	v.visitRule(ctx.Expression(0))
-//	v.visitRule(ctx.Expression(1))
-//
-//	//push result to stack
-//	var t antlr.Token = ctx.GetOp()
-//	right := v.pop()
-//	left := v.pop()
-//	switch t.GetTokenType() {
-//	case parser.TinylangParserMUL:
-//		v.push(left * right)
-//	case parser.TinylangParserDIV:
-//		v.push(left / right)
-//	default:
-//		panic("should not happen")
-//
-//	}
-//
-//	return nil
-//}
-//
-//func (v *Visitor) VisitAddSub(ctx *parser.AddSubContext) interface{} {
-//	//push expression result to stack
-//	v.visitRule(ctx.Expression(0))
-//	v.visitRule(ctx.Expression(1))
-//
-//	//push result to stack
-//	var t antlr.Token = ctx.GetOp()
-//	right := v.pop()
-//	left := v.pop()
-//	switch t.GetTokenType() {
-//	case parser.TinylangParserADD:
-//		v.push(left + right)
-//	case parser.TinylangParserSUB:
-//		v.push(left - right)
-//	default:
-//		panic("should not happen")
-//	}
-//
-//	return nil
-//}
-//
-//func (v *Visitor) VisitParenthesis(ctx *parser.ParenthesisContext) interface{} {
-//	v.visitRule(ctx.Expression())
-//	return nil
-//}
-
-/*func calc(input string) int {
-
-	is := antlr.NewInputStream(input)
-
-	// Create the Lexer
-	lexer := parser.NewCalcLexer(is)
-	tokens := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
-
-	// Create the Parser
-	p := parser.NewCalcParser(tokens)
-
-	v := NewVisitor()
-	//Start is rule name of Calc.g4
-	p.Start().Accept(v)
-	return v.pop()
-}
-
-func executor(in string) {
-	fmt.Printf("Answer: %d\n", calc(in))
-}*/
-
-//func completer(in prompt.Document) []prompt.Suggest {
-//	var ret []prompt.Suggest
-//	return ret
-//}
-
 type TypeCode int
 
 const (
@@ -259,20 +134,6 @@ func (l *calcListener) pushInstr(e *Instruction) {
 
 }
 
-/*func (l *calcListener) popInstr() *Instruction {
-	if len(l.stackInstr) < 1 {
-		panic("stack is empty unable to pop")
-	}
-
-	// Get the last value from the stack.
-	result := l.stackInstr[len(l.stackInstr)-1]
-
-	// Remove the last element from the stack.
-	l.stackInstr = l.stackInstr[:len(l.stackInstr)-1]
-
-	return result
-}*/
-
 func (l *calcListener) pushType(i *Type) {
 	l.stackType = append(l.stackType, i)
 
@@ -310,6 +171,16 @@ func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
 	}
 }
 
+func (l *calcListener) ExitTrue(c *parser.TrueContext) {
+	expr := Expression{code: EXPR_CODE_TRUE}
+	l.pushExpr(&expr)
+}
+
+func (l *calcListener) ExitFalse(c *parser.FalseContext) {
+	expr := Expression{code: EXPR_CODE_FALSE}
+	l.pushExpr(&expr)
+}
+
 func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
 	right, left := l.pop(), l.pop()
 	expr, expr2 := l.popExpr(), l.popExpr()
@@ -328,6 +199,36 @@ func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
 	}
 }
 
+func (l *calcListener) ExitCompare(c *parser.CompareContext) {
+	right, left := l.pop(), l.pop()
+	expr, expr2 := l.popExpr(), l.popExpr()
+
+	switch c.GetOp().GetTokenType() {
+	case parser.TinylangParserEQUALS_TEST:
+		l.push(left + right)
+		expr := Expression{code: EXPR_CODE_EQU, left: expr, right: expr2}
+		l.pushExpr(&expr)
+	case parser.TinylangParserGREATER_THAN:
+		l.push(left - right)
+		expr := Expression{code: EXPR_CODE_GT, left: expr, right: expr2}
+		l.pushExpr(&expr)
+	case parser.TinylangParserGREATER_OR_EQUALS:
+		l.push(left - right)
+		expr := Expression{code: EXPR_CODE_GTE, left: expr, right: expr2}
+		l.pushExpr(&expr)
+	case parser.TinylangParserLESS_THAN:
+		l.push(left - right)
+		expr := Expression{code: EXPR_CODE_LT, left: expr, right: expr2}
+		l.pushExpr(&expr)
+	case parser.TinylangParserLESS_OR_EQUALS:
+		l.push(left - right)
+		expr := Expression{code: EXPR_CODE_LTE, left: expr, right: expr2}
+		l.pushExpr(&expr)
+	default:
+		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
+	}
+}
+
 func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 	i, err := strconv.Atoi(c.GetText())
 	if err != nil {
@@ -340,12 +241,8 @@ func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 }
 
 func (l *calcListener) ExitInstrAffect(c *parser.InstrAffectContext) {
-	//res := c.GetChild(0)
-	//variable := res.GetPayload()
-	//res2 := c.GetChild(2)
 	res3 := l.popExpr()
 	instr := Instruction{Code: INSTRUCTION_AFFECTATION, Variable: c.IDENT().GetText(), Valeur: res3}
-	//fmt.Println("affect", variable, res2, c.IDENT().GetText(), instr)
 	l.pushInstr(&instr)
 	fmt.Println("affect", instr)
 }
@@ -354,7 +251,7 @@ func (l *calcListener) EnterTypeVoid(c *parser.TypeVoidContext) {
 	l.pushType(&Type{code: TYPE_VOID})
 }
 
-func (l *calcListener) EnterTYPEINT(c *parser.TYPEINTContext) {
+func (l *calcListener) EnterTypeInt(c *parser.TypeIntContext) {
 	l.pushType(&Type{code: TYPE_INT})
 }
 
@@ -362,24 +259,16 @@ func (l *calcListener) EnterTypeString(c *parser.TypeStringContext) {
 	l.pushType(&Type{code: TYPE_STRING})
 }
 
+func (l *calcListener) EnterTypeBoolean(c *parser.TypeBooleanContext) {
+	l.pushType(&Type{code: TYPE_BOOLEAN})
+}
+
 func (l *calcListener) ExitFunct(c *parser.FunctContext) {
 	res := c.GetChild(1)
 	typeReturn := l.popType()
 	funct := Function{Name: c.GetName().GetText(), Instruction: l.stackInstr, ReturnType: *typeReturn}
+	l.stackInstr = []*Instruction{}
 	fmt.Println("funct", res.GetPayload(), res.GetPayload(), funct)
-}
-
-type TreeShapeListener struct {
-	*parser.BaseTinylangListener
-}
-
-func NewTreeShapeListener() *TreeShapeListener {
-	return new(TreeShapeListener)
-}
-
-func (this *TreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
-	fmt.Println("text", ctx.GetText())
-
 }
 
 func main() {
@@ -391,30 +280,10 @@ func main() {
 	lex := parser.NewTinylangLexer(fs)
 	tokens := antlr.NewCommonTokenStream(lex, antlr.TokenDefaultChannel)
 	p := parser.NewTinylangParser(tokens)
-	//v := NewVisitor()
-	//visitor := parser.NewCalcBaseCalcVisitor{}
-	//tree := p.Start().Accept(v)
-	//parser.BuildParseTrees = true
 	p.BuildParseTrees = true
 	tree := p.Start()
-	//var result = v.Visit(tree)
-	//antlr.ParseTreeWalkerDefault.Walk(NewTreeShapeListener(), tree)
 	var listener calcListener
 	antlr.ParseTreeWalkerDefault.Walk(&listener, tree)
 	fmt.Println("res", listener.pop())
-	//p.Start().Accept(v)
-	//fmt.Println("result", result)
-	//fmt.Println("len", v.length())
-	//for i := 0; i < v.length(); i++ {
-	//	fmt.Println("res", v.pop())
-	//}
-	//fmt.Println(v.Visit(tree))
 
-	//p := prompt.New(
-	//	executor,
-	//	completer,
-	//	prompt.OptionPrefix(">>> "),
-	//	prompt.OptionTitle("calc"),
-	//)
-	//p.Run()
 }

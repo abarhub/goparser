@@ -2,23 +2,36 @@
 grammar Tinylang;
 
 // Tokens
+WHITESPACE: [ \r\n\t]+ -> skip;
+
 MUL: '*';
 DIV: '/';
 ADD: '+';
 SUB: '-';
-NUMBER: [0-9]+;
-WHITESPACE: [ \r\n\t]+ -> skip;
-COMMA: ',';
-TYPE_VOID: 'void';
-TYPE_INT: 'int';
-TYPE_STRING: 'string';
-IDENT: [a-zA-Z][a-zA-Z0-9_]*;
 PARENTHESIS_OPEN: '(';
 PARENTHESIS_CLOSE: ')';
 CURLY_BRACKET_OPEN: '{';
 CURLY_BRACKET_CLOSE: '}';
 SEMICOLON: ';';
+EQUALS_TEST: '==';
+GREATER_THAN: '>';
+GREATER_OR_EQUALS: '>=';
+LESS_THAN: '<';
+LESS_OR_EQUALS: '<=';
 EQUALS: '=';
+COMMA: ',';
+
+// number
+NUMBER: [0-9]+;
+
+// ident
+TYPE_VOID: 'void';
+TYPE_INT: 'int';
+TYPE_STRING: 'string';
+TYPE_BOOLEAN: 'boolean';
+VALUE_TRUE: 'true';
+VALUE_FALSE: 'false';
+IDENT: [a-zA-Z][a-zA-Z0-9_]*;
 
 
 // Rules
@@ -37,13 +50,17 @@ instruction: id=IDENT EQUALS exp=expression                        # InstrAffect
         ;
 
 type : TYPE_VOID       # TypeVoid
-        | TYPE_INT     # TYPEINT
+        | TYPE_INT     # TypeInt
         | TYPE_STRING  # TypeString
+        | TYPE_BOOLEAN  # TypeBoolean
         ;
 
 expression
    : expression op=('*'|'/') expression # MulDiv
    | expression op=('+'|'-') expression # AddSub
+   | expression op=('>'|'>='|'<'|'<='|'==') expression # Compare
    | e=NUMBER                             # Number
+   | e=VALUE_TRUE                                 # True
+   | e=VALUE_FALSE                                 # False
    | '(' expression ')'                 # Parenthesis
    ;

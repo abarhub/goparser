@@ -26,11 +26,14 @@ type TinylangListener interface {
 	// EnterTypeVoid is called when entering the TypeVoid production.
 	EnterTypeVoid(c *TypeVoidContext)
 
-	// EnterTYPEINT is called when entering the TYPEINT production.
-	EnterTYPEINT(c *TYPEINTContext)
+	// EnterTypeInt is called when entering the TypeInt production.
+	EnterTypeInt(c *TypeIntContext)
 
 	// EnterTypeString is called when entering the TypeString production.
 	EnterTypeString(c *TypeStringContext)
+
+	// EnterTypeBoolean is called when entering the TypeBoolean production.
+	EnterTypeBoolean(c *TypeBooleanContext)
 
 	// EnterParenthesis is called when entering the Parenthesis production.
 	EnterParenthesis(c *ParenthesisContext)
@@ -43,6 +46,15 @@ type TinylangListener interface {
 
 	// EnterAddSub is called when entering the AddSub production.
 	EnterAddSub(c *AddSubContext)
+
+	// EnterTrue is called when entering the True production.
+	EnterTrue(c *TrueContext)
+
+	// EnterCompare is called when entering the Compare production.
+	EnterCompare(c *CompareContext)
+
+	// EnterFalse is called when entering the False production.
+	EnterFalse(c *FalseContext)
 
 	// ExitStartFunction is called when exiting the StartFunction production.
 	ExitStartFunction(c *StartFunctionContext)
@@ -62,11 +74,14 @@ type TinylangListener interface {
 	// ExitTypeVoid is called when exiting the TypeVoid production.
 	ExitTypeVoid(c *TypeVoidContext)
 
-	// ExitTYPEINT is called when exiting the TYPEINT production.
-	ExitTYPEINT(c *TYPEINTContext)
+	// ExitTypeInt is called when exiting the TypeInt production.
+	ExitTypeInt(c *TypeIntContext)
 
 	// ExitTypeString is called when exiting the TypeString production.
 	ExitTypeString(c *TypeStringContext)
+
+	// ExitTypeBoolean is called when exiting the TypeBoolean production.
+	ExitTypeBoolean(c *TypeBooleanContext)
 
 	// ExitParenthesis is called when exiting the Parenthesis production.
 	ExitParenthesis(c *ParenthesisContext)
@@ -79,4 +94,13 @@ type TinylangListener interface {
 
 	// ExitAddSub is called when exiting the AddSub production.
 	ExitAddSub(c *AddSubContext)
+
+	// ExitTrue is called when exiting the True production.
+	ExitTrue(c *TrueContext)
+
+	// ExitCompare is called when exiting the Compare production.
+	ExitCompare(c *CompareContext)
+
+	// ExitFalse is called when exiting the False production.
+	ExitFalse(c *FalseContext)
 }

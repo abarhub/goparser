@@ -57,17 +57,23 @@ func (s *BaseTinylangListener) EnterTypeVoid(ctx *TypeVoidContext) {}
 // ExitTypeVoid is called when production TypeVoid is exited.
 func (s *BaseTinylangListener) ExitTypeVoid(ctx *TypeVoidContext) {}
 
-// EnterTYPEINT is called when production TYPEINT is entered.
-func (s *BaseTinylangListener) EnterTYPEINT(ctx *TYPEINTContext) {}
+// EnterTypeInt is called when production TypeInt is entered.
+func (s *BaseTinylangListener) EnterTypeInt(ctx *TypeIntContext) {}
 
-// ExitTYPEINT is called when production TYPEINT is exited.
-func (s *BaseTinylangListener) ExitTYPEINT(ctx *TYPEINTContext) {}
+// ExitTypeInt is called when production TypeInt is exited.
+func (s *BaseTinylangListener) ExitTypeInt(ctx *TypeIntContext) {}
 
 // EnterTypeString is called when production TypeString is entered.
 func (s *BaseTinylangListener) EnterTypeString(ctx *TypeStringContext) {}
 
 // ExitTypeString is called when production TypeString is exited.
 func (s *BaseTinylangListener) ExitTypeString(ctx *TypeStringContext) {}
+
+// EnterTypeBoolean is called when production TypeBoolean is entered.
+func (s *BaseTinylangListener) EnterTypeBoolean(ctx *TypeBooleanContext) {}
+
+// ExitTypeBoolean is called when production TypeBoolean is exited.
+func (s *BaseTinylangListener) ExitTypeBoolean(ctx *TypeBooleanContext) {}
 
 // EnterParenthesis is called when production Parenthesis is entered.
 func (s *BaseTinylangListener) EnterParenthesis(ctx *ParenthesisContext) {}
@@ -92,3 +98,21 @@ func (s *BaseTinylangListener) EnterAddSub(ctx *AddSubContext) {}
 
 // ExitAddSub is called when production AddSub is exited.
 func (s *BaseTinylangListener) ExitAddSub(ctx *AddSubContext) {}
+
+// EnterTrue is called when production True is entered.
+func (s *BaseTinylangListener) EnterTrue(ctx *TrueContext) {}
+
+// ExitTrue is called when production True is exited.
+func (s *BaseTinylangListener) ExitTrue(ctx *TrueContext) {}
+
+// EnterCompare is called when production Compare is entered.
+func (s *BaseTinylangListener) EnterCompare(ctx *CompareContext) {}
+
+// ExitCompare is called when production Compare is exited.
+func (s *BaseTinylangListener) ExitCompare(ctx *CompareContext) {}
+
+// EnterFalse is called when production False is entered.
+func (s *BaseTinylangListener) EnterFalse(ctx *FalseContext) {}
+
+// ExitFalse is called when production False is exited.
+func (s *BaseTinylangListener) ExitFalse(ctx *FalseContext) {}
