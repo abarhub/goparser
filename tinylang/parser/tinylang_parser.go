@@ -320,6 +320,9 @@ func (s *FunctionContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 
 type FunctContext struct {
 	*FunctionContext
+	t         ITypeContext
+	name      antlr.Token
+	instrlist IInstruction_listContext
 }
 
 func NewFunctContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *FunctContext {
@@ -332,8 +335,36 @@ func NewFunctContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *FunctCon
 	return p
 }
 
+func (s *FunctContext) GetName() antlr.Token { return s.name }
+
+func (s *FunctContext) SetName(v antlr.Token) { s.name = v }
+
+func (s *FunctContext) GetT() ITypeContext { return s.t }
+
+func (s *FunctContext) GetInstrlist() IInstruction_listContext { return s.instrlist }
+
+func (s *FunctContext) SetT(v ITypeContext) { s.t = v }
+
+func (s *FunctContext) SetInstrlist(v IInstruction_listContext) { s.instrlist = v }
+
 func (s *FunctContext) GetRuleContext() antlr.RuleContext {
 	return s
+}
+
+func (s *FunctContext) PARENTHESIS_OPEN() antlr.TerminalNode {
+	return s.GetToken(TinylangParserPARENTHESIS_OPEN, 0)
+}
+
+func (s *FunctContext) PARENTHESIS_CLOSE() antlr.TerminalNode {
+	return s.GetToken(TinylangParserPARENTHESIS_CLOSE, 0)
+}
+
+func (s *FunctContext) CURLY_BRACKET_OPEN() antlr.TerminalNode {
+	return s.GetToken(TinylangParserCURLY_BRACKET_OPEN, 0)
+}
+
+func (s *FunctContext) CURLY_BRACKET_CLOSE() antlr.TerminalNode {
+	return s.GetToken(TinylangParserCURLY_BRACKET_CLOSE, 0)
 }
 
 func (s *FunctContext) Type() ITypeContext {
@@ -356,18 +387,6 @@ func (s *FunctContext) IDENT() antlr.TerminalNode {
 	return s.GetToken(TinylangParserIDENT, 0)
 }
 
-func (s *FunctContext) PARENTHESIS_OPEN() antlr.TerminalNode {
-	return s.GetToken(TinylangParserPARENTHESIS_OPEN, 0)
-}
-
-func (s *FunctContext) PARENTHESIS_CLOSE() antlr.TerminalNode {
-	return s.GetToken(TinylangParserPARENTHESIS_CLOSE, 0)
-}
-
-func (s *FunctContext) CURLY_BRACKET_OPEN() antlr.TerminalNode {
-	return s.GetToken(TinylangParserCURLY_BRACKET_OPEN, 0)
-}
-
 func (s *FunctContext) Instruction_list() IInstruction_listContext {
 	var t antlr.RuleContext
 	for _, ctx := range s.GetChildren() {
@@ -382,10 +401,6 @@ func (s *FunctContext) Instruction_list() IInstruction_listContext {
 	}
 
 	return t.(IInstruction_listContext)
-}
-
-func (s *FunctContext) CURLY_BRACKET_CLOSE() antlr.TerminalNode {
-	return s.GetToken(TinylangParserCURLY_BRACKET_CLOSE, 0)
 }
 
 func (s *FunctContext) EnterRule(listener antlr.ParseTreeListener) {
@@ -427,11 +442,17 @@ func (p *TinylangParser) Function() (localctx IFunctionContext) {
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(14)
-		p.Type()
+
+		var _x = p.Type()
+
+		localctx.(*FunctContext).t = _x
 	}
 	{
 		p.SetState(15)
-		p.Match(TinylangParserIDENT)
+
+		var _m = p.Match(TinylangParserIDENT)
+
+		localctx.(*FunctContext).name = _m
 	}
 	{
 		p.SetState(16)
@@ -447,7 +468,10 @@ func (p *TinylangParser) Function() (localctx IFunctionContext) {
 	}
 	{
 		p.SetState(19)
-		p.Instruction_list()
+
+		var _x = p.Instruction_list()
+
+		localctx.(*FunctContext).instrlist = _x
 	}
 	{
 		p.SetState(20)
@@ -1234,6 +1258,7 @@ func (s *ParenthesisContext) ExitRule(listener antlr.ParseTreeListener) {
 
 type NumberContext struct {
 	*ExpressionContext
+	e antlr.Token
 }
 
 func NewNumberContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *NumberContext {
@@ -1245,6 +1270,10 @@ func NewNumberContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *NumberC
 
 	return p
 }
+
+func (s *NumberContext) GetE() antlr.Token { return s.e }
+
+func (s *NumberContext) SetE(v antlr.Token) { s.e = v }
 
 func (s *NumberContext) GetRuleContext() antlr.RuleContext {
 	return s
@@ -1481,7 +1510,10 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 
 		{
 			p.SetState(46)
-			p.Match(TinylangParserNUMBER)
+
+			var _m = p.Match(TinylangParserNUMBER)
+
+			localctx.(*NumberContext).e = _m
 		}
 
 	case TinylangParserPARENTHESIS_OPEN:

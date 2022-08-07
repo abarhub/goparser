@@ -26,7 +26,7 @@ start :  function                  # StartFunction
         ;
 
 
-function: type IDENT PARENTHESIS_OPEN PARENTHESIS_CLOSE CURLY_BRACKET_OPEN   instruction_list CURLY_BRACKET_CLOSE  # Funct
+function: t=type name=IDENT PARENTHESIS_OPEN PARENTHESIS_CLOSE CURLY_BRACKET_OPEN   instrlist=instruction_list CURLY_BRACKET_CLOSE  # Funct
         ;
 
 instruction_list: ( instruction SEMICOLON )*    # ListInstruction
@@ -44,6 +44,6 @@ type : TYPE_VOID       # TypeVoid
 expression
    : expression op=('*'|'/') expression # MulDiv
    | expression op=('+'|'-') expression # AddSub
-   | NUMBER                             # Number
+   | e=NUMBER                             # Number
    | '(' expression ')'                 # Parenthesis
    ;

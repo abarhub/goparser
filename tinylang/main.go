@@ -135,10 +135,83 @@ func executor(in string) {
 //	return ret
 //}
 
+type TypeCode int
+
+const (
+	TYPE_INT TypeCode = iota
+	TYPE_VOID
+	TYPE_STRING
+	TYPE_BOOLEAN
+)
+
+type InstructionCode int
+
+const (
+	INSTRUCTION_AFFECTATION InstructionCode = iota
+	INSTRUCTION_CALL
+)
+
+type Position struct {
+	line   int
+	column int
+	pos    int
+}
+
+type Type struct {
+	code     TypeCode
+	position *Position
+}
+
+type Function struct {
+	ReturnType  Type
+	Name        string
+	Instruction []Instruction
+	position    *Position
+}
+
+type Instruction struct {
+	Code         InstructionCode
+	FunctionName string
+	Variable     string
+	Valeur       *Expression
+	Parameter    []Expression
+	position     *Position
+}
+
+type ExprCode int
+
+const (
+	EXPR_CODE_INT ExprCode = iota
+	EXPR_CODE_VAR
+	EXPR_CODE_ADD
+	EXPR_CODE_SUB
+	EXPR_CODE_MUL
+	EXPR_CODE_DIV
+	EXPR_CODE_STR
+	EXPR_CODE_LT
+	EXPR_CODE_LTE
+	EXPR_CODE_GT
+	EXPR_CODE_GTE
+	EXPR_CODE_EQU
+	EXPR_CODE_TRUE
+	EXPR_CODE_FALSE
+)
+
+type Expression struct {
+	code         ExprCode
+	valeurInt    int
+	variable     string
+	valeurString string
+	left         *Expression
+	right        *Expression
+	position     *Position
+}
+
 type calcListener struct {
 	*parser.BaseTinylangListener
 
-	stack []int
+	stack     []int
+	stackExpr []*Expression
 }
 
 func (l *calcListener) push(i int) {
@@ -160,14 +233,38 @@ func (l *calcListener) pop() int {
 	return result
 }
 
+func (l *calcListener) pushExpr(e *Expression) {
+	l.stackExpr = append(l.stackExpr, e)
+
+}
+
+func (l *calcListener) popExpr() *Expression {
+	if len(l.stackExpr) < 1 {
+		panic("stack is empty unable to pop")
+	}
+
+	// Get the last value from the stack.
+	result := l.stackExpr[len(l.stackExpr)-1]
+
+	// Remove the last element from the stack.
+	l.stackExpr = l.stackExpr[:len(l.stackExpr)-1]
+
+	return result
+}
+
 func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
 	right, left := l.pop(), l.pop()
+	expr, expr2 := l.popExpr(), l.popExpr()
 
 	switch c.GetOp().GetTokenType() {
 	case parser.TinylangParserMUL:
 		l.push(left * right)
+		expr := Expression{code: EXPR_CODE_MUL, left: expr, right: expr2}
+		l.pushExpr(&expr)
 	case parser.TinylangParserDIV:
 		l.push(left / right)
+		expr := Expression{code: EXPR_CODE_DIV, left: expr, right: expr2}
+		l.pushExpr(&expr)
 	default:
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
@@ -175,12 +272,17 @@ func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
 
 func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
 	right, left := l.pop(), l.pop()
+	expr, expr2 := l.popExpr(), l.popExpr()
 
 	switch c.GetOp().GetTokenType() {
 	case parser.TinylangParserADD:
 		l.push(left + right)
+		expr := Expression{code: EXPR_CODE_ADD, left: expr, right: expr2}
+		l.pushExpr(&expr)
 	case parser.TinylangParserSUB:
 		l.push(left - right)
+		expr := Expression{code: EXPR_CODE_SUB, left: expr, right: expr2}
+		l.pushExpr(&expr)
 	default:
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
@@ -193,13 +295,18 @@ func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 	}
 
 	l.push(i)
+	expr := Expression{code: EXPR_CODE_INT, valeurInt: i}
+	l.pushExpr(&expr)
 }
 
 func (l *calcListener) ExitInstrAffect(c *parser.InstrAffectContext) {
-	res := c.GetChild(0)
-	variable := res.GetPayload()
-	res2 := c.GetChild(2)
-	fmt.Println("affect", variable, res2, c.IDENT().GetText())
+	//res := c.GetChild(0)
+	//variable := res.GetPayload()
+	//res2 := c.GetChild(2)
+	res3 := l.popExpr()
+	instr := Instruction{Code: INSTRUCTION_AFFECTATION, Variable: c.IDENT().GetText(), Valeur: res3}
+	//fmt.Println("affect", variable, res2, c.IDENT().GetText(), instr)
+	fmt.Println("affect", instr)
 }
 
 func (l *calcListener) ExitFunct(c *parser.FunctContext) {
