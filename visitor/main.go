@@ -4,16 +4,10 @@ package main
 import (
 	"fmt"
 	"github.com/abarhub/goparser/visitor/parser"
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"log"
 	"os"
-
-	//"github.com/abarhub/goparser/listen/parser"
-
 	"strconv"
-
-	//"./parser"
-	"github.com/antlr/antlr4/runtime/Go/antlr"
-	//prompt "github.com/c-bata/go-prompt"
 )
 
 type Visitor struct {
@@ -41,6 +35,10 @@ func (l *Visitor) pop() int {
 	l.stack = l.stack[:len(l.stack)-1]
 
 	return result
+}
+
+func (l *Visitor) length() int {
+	return len(l.stack)
 }
 
 func (v *Visitor) visitRule(node antlr.RuleNode) interface{} {
@@ -149,7 +147,9 @@ func main() {
 	//visitor := parser.NewCalcBaseCalcVisitor{}
 	//tree := p.Start().Accept(v)
 	p.Start().Accept(v)
-	fmt.Println("res", v.pop())
+	for i := 0; i < v.length(); i++ {
+		fmt.Println("res", v.pop())
+	}
 	//fmt.Println(v.Visit(tree))
 
 	//p := prompt.New(
