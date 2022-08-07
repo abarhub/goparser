@@ -165,7 +165,7 @@ type Type struct {
 type Function struct {
 	ReturnType  Type
 	Name        string
-	Instruction []Instruction
+	Instruction []*Instruction
 	position    *Position
 }
 
@@ -174,7 +174,7 @@ type Instruction struct {
 	FunctionName string
 	Variable     string
 	Valeur       *Expression
-	Parameter    []Expression
+	Parameter    []*Expression
 	position     *Position
 }
 
@@ -210,8 +210,10 @@ type Expression struct {
 type calcListener struct {
 	*parser.BaseTinylangListener
 
-	stack     []int
-	stackExpr []*Expression
+	stack      []int
+	stackExpr  []*Expression
+	stackInstr []*Instruction
+	stackType  []*Type
 }
 
 func (l *calcListener) push(i int) {
@@ -248,6 +250,44 @@ func (l *calcListener) popExpr() *Expression {
 
 	// Remove the last element from the stack.
 	l.stackExpr = l.stackExpr[:len(l.stackExpr)-1]
+
+	return result
+}
+
+func (l *calcListener) pushInstr(e *Instruction) {
+	l.stackInstr = append(l.stackInstr, e)
+
+}
+
+/*func (l *calcListener) popInstr() *Instruction {
+	if len(l.stackInstr) < 1 {
+		panic("stack is empty unable to pop")
+	}
+
+	// Get the last value from the stack.
+	result := l.stackInstr[len(l.stackInstr)-1]
+
+	// Remove the last element from the stack.
+	l.stackInstr = l.stackInstr[:len(l.stackInstr)-1]
+
+	return result
+}*/
+
+func (l *calcListener) pushType(i *Type) {
+	l.stackType = append(l.stackType, i)
+
+}
+
+func (l *calcListener) popType() *Type {
+	if len(l.stackType) < 1 {
+		panic("stack is empty unable to pop")
+	}
+
+	// Get the last value from the stack.
+	result := l.stackType[len(l.stackType)-1]
+
+	// Remove the last element from the stack.
+	l.stackType = l.stackType[:len(l.stackType)-1]
 
 	return result
 }
@@ -306,12 +346,27 @@ func (l *calcListener) ExitInstrAffect(c *parser.InstrAffectContext) {
 	res3 := l.popExpr()
 	instr := Instruction{Code: INSTRUCTION_AFFECTATION, Variable: c.IDENT().GetText(), Valeur: res3}
 	//fmt.Println("affect", variable, res2, c.IDENT().GetText(), instr)
+	l.pushInstr(&instr)
 	fmt.Println("affect", instr)
+}
+
+func (l *calcListener) EnterTypeVoid(c *parser.TypeVoidContext) {
+	l.pushType(&Type{code: TYPE_VOID})
+}
+
+func (l *calcListener) EnterTYPEINT(c *parser.TYPEINTContext) {
+	l.pushType(&Type{code: TYPE_INT})
+}
+
+func (l *calcListener) EnterTypeString(c *parser.TypeStringContext) {
+	l.pushType(&Type{code: TYPE_STRING})
 }
 
 func (l *calcListener) ExitFunct(c *parser.FunctContext) {
 	res := c.GetChild(1)
-	fmt.Println("funct", res.GetPayload(), res.GetPayload())
+	typeReturn := l.popType()
+	funct := Function{Name: c.GetName().GetText(), Instruction: l.stackInstr, ReturnType: *typeReturn}
+	fmt.Println("funct", res.GetPayload(), res.GetPayload(), funct)
 }
 
 type TreeShapeListener struct {
