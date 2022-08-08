@@ -292,6 +292,10 @@ func main() {
 			fmt.Println("error interpreter", err)
 		} else {
 			fmt.Printf("symbolTable: %v\n", symbolTable)
+
+			fmt.Printf("compile llvm ...\n")
+			compileLLVM(functionList)
+			fmt.Printf("compile llvm ok\n")
 		}
 	}
 }
