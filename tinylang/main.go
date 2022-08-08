@@ -1,4 +1,3 @@
-// for vistor pattern
 package main
 
 import (
@@ -85,10 +84,11 @@ type Expression struct {
 type calcListener struct {
 	*parser.BaseTinylangListener
 
-	stack      []int
-	stackExpr  []*Expression
-	stackInstr []*Instruction
-	stackType  []*Type
+	stack        []int
+	stackExpr    []*Expression
+	stackInstr   []*Instruction
+	stackType    []*Type
+	functionList []*Function
 }
 
 func (l *calcListener) push(i int) {
@@ -136,7 +136,6 @@ func (l *calcListener) pushInstr(e *Instruction) {
 
 func (l *calcListener) pushType(i *Type) {
 	l.stackType = append(l.stackType, i)
-
 }
 
 func (l *calcListener) popType() *Type {
@@ -151,6 +150,10 @@ func (l *calcListener) popType() *Type {
 	l.stackType = l.stackType[:len(l.stackType)-1]
 
 	return result
+}
+
+func (l *calcListener) addFunction(i *Function) {
+	l.functionList = append(l.functionList, i)
 }
 
 func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
@@ -268,6 +271,7 @@ func (l *calcListener) ExitFunct(c *parser.FunctContext) {
 	typeReturn := l.popType()
 	funct := Function{Name: c.GetName().GetText(), Instruction: l.stackInstr, ReturnType: *typeReturn}
 	l.stackInstr = []*Instruction{}
+	l.addFunction(&funct)
 	fmt.Println("funct", res.GetPayload(), res.GetPayload(), funct)
 }
 
@@ -286,4 +290,20 @@ func main() {
 	antlr.ParseTreeWalkerDefault.Walk(&listener, tree)
 	fmt.Println("res", listener.pop())
 
+	fmt.Println("nb funct", len(listener.functionList))
+
+	functionList := listener.functionList
+	err = Checker(functionList)
+	if err != nil {
+		fmt.Println("error checker", err)
+	} else {
+		interpreter := NewInterpreter(functionList)
+		var symbolTable []map[string]Valeur
+		symbolTable, err = interpreter.interpreter()
+		if err != nil {
+			fmt.Println("error interpreter", err)
+		} else {
+			fmt.Printf("symbolTable: %v\n", symbolTable)
+		}
+	}
 }
