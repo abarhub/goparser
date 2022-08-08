@@ -5,13 +5,92 @@ import (
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
+	"os"
 )
 
-func compileLLVM(functionList []*Function) {
-	test2()
+func compileLLVM(functionList []*Function) error {
+	//testLLVM1()
+	err := testLLVM2(functionList)
+	return err
 }
 
-func test2() {
+func testLLVM2(listFunction []*Function) error {
+	m := ir.NewModule()
+
+	i32 := types.I32
+	zero := constant.NewInt(i32, 0)
+
+	main := m.NewFunc("main2", i32)
+
+	for _, function := range listFunction {
+		var funct *ir.Func
+		if function.Name == "main" {
+			funct = main
+		} else {
+			funct = m.NewFunc(function.Name, i32)
+		}
+		entry := funct.NewBlock("")
+		for _, instruction := range function.Instruction {
+			if instruction.Code == INSTRUCTION_AFFECTATION {
+				val := instruction.Valeur
+				var c *constant.Int
+				if val.code == EXPR_CODE_INT {
+					c = constant.NewInt(i32, int64(val.valeurInt))
+				} else {
+					c = constant.NewInt(i32, 0)
+				}
+				tmp := entry.NewAlloca(i32)
+				//tmp := entry.NewAdd(tmp2, c)
+				entry.NewStore(c, tmp)
+			}
+		}
+		entry.NewRet(zero)
+	}
+	//pretty.Println(m)
+	f, err := os.Create("./tmp/test1.ll")
+	if err != nil {
+		return err
+	}
+	defer func(f *os.File) error {
+		err := f.Close()
+		if err != nil {
+			return err
+		}
+		return nil
+	}(f)
+	_, err = fmt.Fprintln(f, m)
+	if err != nil {
+		return err
+	}
+
+	err = writeMain()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func writeMain() error {
+	f, err := os.Create("./tmp/main.c")
+	if err != nil {
+		return err
+	}
+	defer func(f *os.File) error {
+		err := f.Close()
+		if err != nil {
+			return err
+		}
+		return nil
+	}(f)
+	_, err = fmt.Fprintf(f, "#include<stdio.h>\n\nint main2();\n\nint main()\n{\n\tprintf(\"coucou\\n\");\n\tprintf(\"n=%d\\n\",main2());\n\treturn 0;\n}\n")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func testLLVM1() {
 	i32 := types.I32
 	zero := constant.NewInt(i32, 0)
 	a := constant.NewInt(i32, 0x15A4E35) // multiplier of the PRNG.
