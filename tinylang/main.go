@@ -84,30 +84,10 @@ type Expression struct {
 type calcListener struct {
 	*parser.BaseTinylangListener
 
-	stack        []int
 	stackExpr    []*Expression
 	stackInstr   []*Instruction
 	stackType    []*Type
 	functionList []*Function
-}
-
-func (l *calcListener) push(i int) {
-	l.stack = append(l.stack, i)
-
-}
-
-func (l *calcListener) pop() int {
-	if len(l.stack) < 1 {
-		panic("stack is empty unable to pop")
-	}
-
-	// Get the last value from the stack.
-	result := l.stack[len(l.stack)-1]
-
-	// Remove the last element from the stack.
-	l.stack = l.stack[:len(l.stack)-1]
-
-	return result
 }
 
 func (l *calcListener) pushExpr(e *Expression) {
@@ -131,7 +111,6 @@ func (l *calcListener) popExpr() *Expression {
 
 func (l *calcListener) pushInstr(e *Instruction) {
 	l.stackInstr = append(l.stackInstr, e)
-
 }
 
 func (l *calcListener) pushType(i *Type) {
@@ -157,79 +136,67 @@ func (l *calcListener) addFunction(i *Function) {
 }
 
 func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
-	right, left := l.pop(), l.pop()
 	expr, expr2 := l.popExpr(), l.popExpr()
 
+	var code ExprCode
 	switch c.GetOp().GetTokenType() {
 	case parser.TinylangParserMUL:
-		l.push(left * right)
-		expr := Expression{code: EXPR_CODE_MUL, left: expr, right: expr2}
-		l.pushExpr(&expr)
+		code = EXPR_CODE_MUL
 	case parser.TinylangParserDIV:
-		l.push(left / right)
-		expr := Expression{code: EXPR_CODE_DIV, left: expr, right: expr2}
-		l.pushExpr(&expr)
+		code = EXPR_CODE_DIV
 	default:
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
+	expr3 := Expression{code: code, left: expr, right: expr2, position: getPosition(c.GetOp())}
+	l.pushExpr(&expr3)
 }
 
 func (l *calcListener) ExitTrue(c *parser.TrueContext) {
-	expr := Expression{code: EXPR_CODE_TRUE}
+	expr := Expression{code: EXPR_CODE_TRUE, position: getPosition(c.GetStart())}
 	l.pushExpr(&expr)
 }
 
 func (l *calcListener) ExitFalse(c *parser.FalseContext) {
-	expr := Expression{code: EXPR_CODE_FALSE}
+	expr := Expression{code: EXPR_CODE_FALSE, position: getPosition(c.GetStart())}
 	l.pushExpr(&expr)
 }
 
 func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
-	right, left := l.pop(), l.pop()
 	expr, expr2 := l.popExpr(), l.popExpr()
 
+	var code ExprCode
 	switch c.GetOp().GetTokenType() {
 	case parser.TinylangParserADD:
-		l.push(left + right)
-		expr := Expression{code: EXPR_CODE_ADD, left: expr, right: expr2}
-		l.pushExpr(&expr)
+		code = EXPR_CODE_ADD
 	case parser.TinylangParserSUB:
-		l.push(left - right)
-		expr := Expression{code: EXPR_CODE_SUB, left: expr, right: expr2}
-		l.pushExpr(&expr)
+		code = EXPR_CODE_SUB
 	default:
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
+	expr3 := Expression{code: code, left: expr, right: expr2, position: getPosition(c.GetOp())}
+	l.pushExpr(&expr3)
 }
 
 func (l *calcListener) ExitCompare(c *parser.CompareContext) {
-	right, left := l.pop(), l.pop()
 	expr, expr2 := l.popExpr(), l.popExpr()
 
+	var code ExprCode
 	switch c.GetOp().GetTokenType() {
 	case parser.TinylangParserEQUALS_TEST:
-		l.push(left + right)
-		expr := Expression{code: EXPR_CODE_EQU, left: expr, right: expr2}
-		l.pushExpr(&expr)
+		code = EXPR_CODE_EQU
 	case parser.TinylangParserGREATER_THAN:
-		l.push(left - right)
-		expr := Expression{code: EXPR_CODE_GT, left: expr, right: expr2}
-		l.pushExpr(&expr)
+		code = EXPR_CODE_GT
 	case parser.TinylangParserGREATER_OR_EQUALS:
-		l.push(left - right)
-		expr := Expression{code: EXPR_CODE_GTE, left: expr, right: expr2}
-		l.pushExpr(&expr)
+		code = EXPR_CODE_GTE
 	case parser.TinylangParserLESS_THAN:
-		l.push(left - right)
-		expr := Expression{code: EXPR_CODE_LT, left: expr, right: expr2}
-		l.pushExpr(&expr)
+		code = EXPR_CODE_LT
 	case parser.TinylangParserLESS_OR_EQUALS:
-		l.push(left - right)
-		expr := Expression{code: EXPR_CODE_LTE, left: expr, right: expr2}
-		l.pushExpr(&expr)
+		code = EXPR_CODE_LTE
 	default:
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
+	expr3 := Expression{code: code, left: expr, right: expr2, position: getPosition(c.GetOp())}
+	l.pushExpr(&expr3)
 }
 
 func (l *calcListener) ExitNumber(c *parser.NumberContext) {
@@ -238,38 +205,59 @@ func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 		panic(err.Error())
 	}
 
-	l.push(i)
-	expr := Expression{code: EXPR_CODE_INT, valeurInt: i}
+	expr := Expression{code: EXPR_CODE_INT, valeurInt: i, position: getPosition(c.GetStart())}
 	l.pushExpr(&expr)
+}
+
+func (l *calcListener) ExitExprIdent(c *parser.ExprIdentContext) {
+	name := c.GetText()
+	//fmt.Printf("ident: %v;%v;%v;%v;%v;%v;%v\n", name, c, c.GetStart(), c.GetStart().GetLine(), c.GetStart().GetColumn(), c.GetStart().GetStart(), c.GetStart().GetStop())
+	//position:=Position{line: c.GetStart().GetLine(),column: c.GetStart().GetColumn(),pos: c.GetStart().GetStart()}
+	expr := Expression{code: EXPR_CODE_VAR, variable: name, position: getPosition(c.GetStart())}
+	l.pushExpr(&expr)
+}
+
+func (l *calcListener) ExitExprString(c *parser.ExprStringContext) {
+	str := c.GetText()
+	str = str[1 : len(str)-1]
+	expr := Expression{code: EXPR_CODE_STR, valeurString: str, position: getPosition(c.GetStart())}
+	l.pushExpr(&expr)
+}
+
+func getPosition(token antlr.Token) (position *Position) {
+	position = &Position{line: token.GetLine(), column: token.GetColumn(), pos: token.GetStart()}
+	return
 }
 
 func (l *calcListener) ExitInstrAffect(c *parser.InstrAffectContext) {
 	res3 := l.popExpr()
-	instr := Instruction{Code: INSTRUCTION_AFFECTATION, Variable: c.IDENT().GetText(), Valeur: res3}
+	instr := Instruction{Code: INSTRUCTION_AFFECTATION, Variable: c.IDENT().GetText(),
+		Valeur: res3, position: getPosition(c.GetStart())}
 	l.pushInstr(&instr)
 	fmt.Println("affect", instr)
 }
 
 func (l *calcListener) EnterTypeVoid(c *parser.TypeVoidContext) {
-	l.pushType(&Type{code: TYPE_VOID})
+	l.pushType(&Type{code: TYPE_VOID, position: getPosition(c.GetStart())})
 }
 
 func (l *calcListener) EnterTypeInt(c *parser.TypeIntContext) {
-	l.pushType(&Type{code: TYPE_INT})
+	l.pushType(&Type{code: TYPE_INT, position: getPosition(c.GetStart())})
 }
 
 func (l *calcListener) EnterTypeString(c *parser.TypeStringContext) {
-	l.pushType(&Type{code: TYPE_STRING})
+	l.pushType(&Type{code: TYPE_STRING, position: getPosition(c.GetStart())})
 }
 
 func (l *calcListener) EnterTypeBoolean(c *parser.TypeBooleanContext) {
-	l.pushType(&Type{code: TYPE_BOOLEAN})
+	l.pushType(&Type{code: TYPE_BOOLEAN, position: getPosition(c.GetStart())})
 }
 
 func (l *calcListener) ExitFunct(c *parser.FunctContext) {
 	res := c.GetChild(1)
 	typeReturn := l.popType()
-	funct := Function{Name: c.GetName().GetText(), Instruction: l.stackInstr, ReturnType: *typeReturn}
+	funct := Function{Name: c.GetName().GetText(), Instruction: l.stackInstr,
+		ReturnType: *typeReturn, position: getPosition(c.GetStart())}
 	l.stackInstr = []*Instruction{}
 	l.addFunction(&funct)
 	fmt.Println("funct", res.GetPayload(), res.GetPayload(), funct)
@@ -288,7 +276,7 @@ func main() {
 	tree := p.Start()
 	var listener calcListener
 	antlr.ParseTreeWalkerDefault.Walk(&listener, tree)
-	fmt.Println("res", listener.pop())
+	//fmt.Println("res", listener.pop())
 
 	fmt.Println("nb funct", len(listener.functionList))
 

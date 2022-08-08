@@ -41,6 +41,9 @@ type TinylangListener interface {
 	// EnterNumber is called when entering the Number production.
 	EnterNumber(c *NumberContext)
 
+	// EnterExprString is called when entering the ExprString production.
+	EnterExprString(c *ExprStringContext)
+
 	// EnterMulDiv is called when entering the MulDiv production.
 	EnterMulDiv(c *MulDivContext)
 
@@ -55,6 +58,9 @@ type TinylangListener interface {
 
 	// EnterFalse is called when entering the False production.
 	EnterFalse(c *FalseContext)
+
+	// EnterExprIdent is called when entering the ExprIdent production.
+	EnterExprIdent(c *ExprIdentContext)
 
 	// ExitStartFunction is called when exiting the StartFunction production.
 	ExitStartFunction(c *StartFunctionContext)
@@ -89,6 +95,9 @@ type TinylangListener interface {
 	// ExitNumber is called when exiting the Number production.
 	ExitNumber(c *NumberContext)
 
+	// ExitExprString is called when exiting the ExprString production.
+	ExitExprString(c *ExprStringContext)
+
 	// ExitMulDiv is called when exiting the MulDiv production.
 	ExitMulDiv(c *MulDivContext)
 
@@ -103,4 +112,7 @@ type TinylangListener interface {
 
 	// ExitFalse is called when exiting the False production.
 	ExitFalse(c *FalseContext)
+
+	// ExitExprIdent is called when exiting the ExprIdent production.
+	ExitExprIdent(c *ExprIdentContext)
 }

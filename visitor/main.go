@@ -66,7 +66,7 @@ func (v *Visitor) VisitMulDiv(ctx *parser.MulDivContext) interface{} {
 	v.visitRule(ctx.Expression(1))
 
 	//push result to stack
-	var t antlr.Token = ctx.GetOp()
+	var t = ctx.GetOp()
 	right := v.pop()
 	left := v.pop()
 	switch t.GetTokenType() {
@@ -88,7 +88,7 @@ func (v *Visitor) VisitAddSub(ctx *parser.AddSubContext) interface{} {
 	v.visitRule(ctx.Expression(1))
 
 	//push result to stack
-	var t antlr.Token = ctx.GetOp()
+	var t = ctx.GetOp()
 	right := v.pop()
 	left := v.pop()
 	switch t.GetTokenType() {

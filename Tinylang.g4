@@ -33,6 +33,7 @@ VALUE_TRUE: 'true';
 VALUE_FALSE: 'false';
 IDENT: [a-zA-Z][a-zA-Z0-9_]*;
 
+STRING : '"' ~('"')* '"' ;
 
 // Rules
 start :  function                  # StartFunction
@@ -62,5 +63,7 @@ expression
    | e=NUMBER                             # Number
    | e=VALUE_TRUE                                 # True
    | e=VALUE_FALSE                                 # False
+   | e=IDENT                                 # ExprIdent
+   | e=STRING                                # ExprString
    | '(' expression ')'                 # Parenthesis
    ;

@@ -87,6 +87,12 @@ func (s *BaseTinylangListener) EnterNumber(ctx *NumberContext) {}
 // ExitNumber is called when production Number is exited.
 func (s *BaseTinylangListener) ExitNumber(ctx *NumberContext) {}
 
+// EnterExprString is called when production ExprString is entered.
+func (s *BaseTinylangListener) EnterExprString(ctx *ExprStringContext) {}
+
+// ExitExprString is called when production ExprString is exited.
+func (s *BaseTinylangListener) ExitExprString(ctx *ExprStringContext) {}
+
 // EnterMulDiv is called when production MulDiv is entered.
 func (s *BaseTinylangListener) EnterMulDiv(ctx *MulDivContext) {}
 
@@ -116,3 +122,9 @@ func (s *BaseTinylangListener) EnterFalse(ctx *FalseContext) {}
 
 // ExitFalse is called when production False is exited.
 func (s *BaseTinylangListener) ExitFalse(ctx *FalseContext) {}
+
+// EnterExprIdent is called when production ExprIdent is entered.
+func (s *BaseTinylangListener) EnterExprIdent(ctx *ExprIdentContext) {}
+
+// ExitExprIdent is called when production ExprIdent is exited.
+func (s *BaseTinylangListener) ExitExprIdent(ctx *ExprIdentContext) {}
