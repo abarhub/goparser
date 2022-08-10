@@ -83,7 +83,7 @@ func writeMain() error {
 		}
 		return nil
 	}(f)
-	_, err = fmt.Fprintf(f, "#include<stdio.h>\n\nint main2();\n\nint main()\n{\n\tprintf(\"coucou\\n\");\n\tprintf(\"n=%d\\n\",main2());\n\treturn 0;\n}\n")
+	_, err = fmt.Fprintf(f, "#include<stdio.h>\n\nint main2();\n\nint main()\n{\n\tprintf(\"coucou\\n\");\n\tprintf(\"n=%%d\\n\",main2());\n\treturn 0;\n}\n")
 	if err != nil {
 		return err
 	}
