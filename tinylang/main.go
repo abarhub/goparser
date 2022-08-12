@@ -265,7 +265,7 @@ func (l *calcListener) ExitFunct(c *parser.FunctContext) {
 
 func main() {
 
-	fs, err := antlr.NewFileStream(os.Args[1])
+	/*fs, err := antlr.NewFileStream(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -276,7 +276,12 @@ func main() {
 	tree := p.Start()
 	var listener calcListener
 	antlr.ParseTreeWalkerDefault.Walk(&listener, tree)
-	//fmt.Println("res", listener.pop())
+	//fmt.Println("res", listener.pop())*/
+	var listener calcListener
+	err := Parser(os.Args[1], &listener)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Println("nb funct", len(listener.functionList))
 
