@@ -18,10 +18,13 @@ func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Typ
 			return typeVar, nil
 		}
 	} else if val.code == EXPR_CODE_TRUE || val.code == EXPR_CODE_FALSE {
+		expression.returnType = &typeBoolean
 		return &typeBoolean, nil
 	} else if val.code == EXPR_CODE_INT {
+		expression.returnType = &typeInt
 		return &typeInt, nil
 	} else if val.code == EXPR_CODE_STR {
+		expression.returnType = &typeString
 		return &typeString, nil
 	} else if expression.code == EXPR_CODE_ADD || expression.code == EXPR_CODE_SUB ||
 		expression.code == EXPR_CODE_EQU || expression.code == EXPR_CODE_LT ||
@@ -46,6 +49,7 @@ func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Typ
 			expression.code == EXPR_CODE_MUL || expression.code == EXPR_CODE_DIV ||
 			expression.code == EXPR_CODE_MOD {
 			if typeLeft.code == TYPE_INT && typeRight.code == TYPE_INT {
+				expression.returnType = &typeInt
 				return &typeInt, nil
 			} else {
 				return nil, fmt.Errorf("error: operator '%v' need int parameters", expression.code)
@@ -55,7 +59,8 @@ func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Typ
 			expression.code == EXPR_CODE_GTE || expression.code == EXPR_CODE_AND ||
 			expression.code == EXPR_CODE_OR {
 			if typeLeft.code == TYPE_BOOLEAN && typeRight.code == TYPE_BOOLEAN {
-				return &typeInt, nil
+				expression.returnType = &typeBoolean
+				return &typeBoolean, nil
 			} else {
 				return nil, fmt.Errorf("error: operator '%v' need boolean parameters", expression.code)
 			}
@@ -71,7 +76,8 @@ func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Typ
 		}
 		if expression.code == EXPR_CODE_NOT {
 			if typeLeft.code == TYPE_BOOLEAN {
-				return &typeInt, nil
+				expression.returnType = &typeBoolean
+				return &typeBoolean, nil
 			} else {
 				return nil, fmt.Errorf("error: operator '%v' need boolean parameter", expression.code)
 			}
@@ -106,8 +112,10 @@ func Checker(functionList []*Function) error {
 				if typeVar == nil {
 					return fmt.Errorf("error: variable %s not affected", variable)
 				}
-				if _, ok := varDeclared[variable]; !ok {
+				if varTypeDeclared, ok := varDeclared[variable]; !ok {
 					varDeclared[variable] = typeVar
+				} else if varTypeDeclared.code != typeVar.code {
+					return fmt.Errorf("error: invalide type for variable %v", variable)
 				}
 			} else if instr.Valeur != nil {
 				var val = instr.Valeur
@@ -119,9 +127,6 @@ func Checker(functionList []*Function) error {
 				}
 			}
 		}
-		//fmt.Printf("prolog: %v\n", kb)
-		//checkVar(kb)
 	}
-	//test1()
 	return nil
 }
