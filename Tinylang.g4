@@ -8,6 +8,7 @@ MUL: '*';
 DIV: '/';
 ADD: '+';
 SUB: '-';
+MOD: '%';
 PARENTHESIS_OPEN: '(';
 PARENTHESIS_CLOSE: ')';
 CURLY_BRACKET_OPEN: '{';
@@ -20,6 +21,8 @@ LESS_THAN: '<';
 LESS_OR_EQUALS: '<=';
 EQUALS: '=';
 COMMA: ',';
+AND_TEST: '&&';
+OR_TEST: '||';
 
 // number
 NUMBER: [0-9]+;
@@ -57,9 +60,10 @@ type : TYPE_VOID       # TypeVoid
         ;
 
 expression
-   : expression op=('*'|'/') expression # MulDiv
+   : expression op=('*'|'/'|'%') expression # MulDiv
    | expression op=('+'|'-') expression # AddSub
    | expression op=('>'|'>='|'<'|'<='|'==') expression # Compare
+   | expression op=('&&'|'||') expression # AndOr
    | e=NUMBER                             # Number
    | e=VALUE_TRUE                                 # True
    | e=VALUE_FALSE                                 # False

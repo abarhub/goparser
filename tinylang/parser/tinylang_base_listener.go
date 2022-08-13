@@ -123,6 +123,12 @@ func (s *BaseTinylangListener) EnterFalse(ctx *FalseContext) {}
 // ExitFalse is called when production False is exited.
 func (s *BaseTinylangListener) ExitFalse(ctx *FalseContext) {}
 
+// EnterAndOr is called when production AndOr is entered.
+func (s *BaseTinylangListener) EnterAndOr(ctx *AndOrContext) {}
+
+// ExitAndOr is called when production AndOr is exited.
+func (s *BaseTinylangListener) ExitAndOr(ctx *AndOrContext) {}
+
 // EnterExprIdent is called when production ExprIdent is entered.
 func (s *BaseTinylangListener) EnterExprIdent(ctx *ExprIdentContext) {}
 

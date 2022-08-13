@@ -33,53 +33,55 @@ var tinylangParserStaticData struct {
 func tinylangParserInit() {
 	staticData := &tinylangParserStaticData
 	staticData.literalNames = []string{
-		"", "", "'*'", "'/'", "'+'", "'-'", "'('", "')'", "'{'", "'}'", "';'",
-		"'=='", "'>'", "'>='", "'<'", "'<='", "'='", "','", "", "'void'", "'int'",
-		"'string'", "'boolean'", "'true'", "'false'",
+		"", "", "'*'", "'/'", "'+'", "'-'", "'%'", "'('", "')'", "'{'", "'}'",
+		"';'", "'=='", "'>'", "'>='", "'<'", "'<='", "'='", "','", "'&&'", "'||'",
+		"", "'void'", "'int'", "'string'", "'boolean'", "'true'", "'false'",
 	}
 	staticData.symbolicNames = []string{
-		"", "WHITESPACE", "MUL", "DIV", "ADD", "SUB", "PARENTHESIS_OPEN", "PARENTHESIS_CLOSE",
-		"CURLY_BRACKET_OPEN", "CURLY_BRACKET_CLOSE", "SEMICOLON", "EQUALS_TEST",
-		"GREATER_THAN", "GREATER_OR_EQUALS", "LESS_THAN", "LESS_OR_EQUALS",
-		"EQUALS", "COMMA", "NUMBER", "TYPE_VOID", "TYPE_INT", "TYPE_STRING",
-		"TYPE_BOOLEAN", "VALUE_TRUE", "VALUE_FALSE", "IDENT", "STRING",
+		"", "WHITESPACE", "MUL", "DIV", "ADD", "SUB", "MOD", "PARENTHESIS_OPEN",
+		"PARENTHESIS_CLOSE", "CURLY_BRACKET_OPEN", "CURLY_BRACKET_CLOSE", "SEMICOLON",
+		"EQUALS_TEST", "GREATER_THAN", "GREATER_OR_EQUALS", "LESS_THAN", "LESS_OR_EQUALS",
+		"EQUALS", "COMMA", "AND_TEST", "OR_TEST", "NUMBER", "TYPE_VOID", "TYPE_INT",
+		"TYPE_STRING", "TYPE_BOOLEAN", "VALUE_TRUE", "VALUE_FALSE", "IDENT",
+		"STRING",
 	}
 	staticData.ruleNames = []string{
 		"start", "function", "instruction_list", "instruction", "type", "expression",
 	}
 	staticData.predictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
-		4, 1, 26, 73, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 1, 29, 76, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 2, 5, 7, 5, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 1, 2, 1, 2, 1, 2, 5, 2, 26, 8, 2, 10, 2, 12, 2, 29, 9, 2, 1, 3, 1, 3,
 		1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 3, 3, 39, 8, 3, 1, 4, 1, 4, 1, 4, 1,
 		4, 3, 4, 45, 8, 4, 1, 5, 1, 5, 1, 5, 1, 5, 1, 5, 1, 5, 1, 5, 1, 5, 1, 5,
 		1, 5, 3, 5, 57, 8, 5, 1, 5, 1, 5, 1, 5, 1, 5, 1, 5, 1, 5, 1, 5, 1, 5, 1,
-		5, 5, 5, 68, 8, 5, 10, 5, 12, 5, 71, 9, 5, 1, 5, 0, 1, 10, 6, 0, 2, 4,
-		6, 8, 10, 0, 3, 1, 0, 2, 3, 1, 0, 4, 5, 1, 0, 11, 15, 79, 0, 12, 1, 0,
-		0, 0, 2, 14, 1, 0, 0, 0, 4, 27, 1, 0, 0, 0, 6, 38, 1, 0, 0, 0, 8, 44, 1,
-		0, 0, 0, 10, 56, 1, 0, 0, 0, 12, 13, 3, 2, 1, 0, 13, 1, 1, 0, 0, 0, 14,
-		15, 3, 8, 4, 0, 15, 16, 5, 25, 0, 0, 16, 17, 5, 6, 0, 0, 17, 18, 5, 7,
-		0, 0, 18, 19, 5, 8, 0, 0, 19, 20, 3, 4, 2, 0, 20, 21, 5, 9, 0, 0, 21, 3,
-		1, 0, 0, 0, 22, 23, 3, 6, 3, 0, 23, 24, 5, 10, 0, 0, 24, 26, 1, 0, 0, 0,
-		25, 22, 1, 0, 0, 0, 26, 29, 1, 0, 0, 0, 27, 25, 1, 0, 0, 0, 27, 28, 1,
-		0, 0, 0, 28, 5, 1, 0, 0, 0, 29, 27, 1, 0, 0, 0, 30, 31, 5, 25, 0, 0, 31,
-		32, 5, 16, 0, 0, 32, 39, 3, 10, 5, 0, 33, 34, 3, 8, 4, 0, 34, 35, 5, 25,
-		0, 0, 35, 36, 5, 16, 0, 0, 36, 37, 3, 10, 5, 0, 37, 39, 1, 0, 0, 0, 38,
-		30, 1, 0, 0, 0, 38, 33, 1, 0, 0, 0, 39, 7, 1, 0, 0, 0, 40, 45, 5, 19, 0,
-		0, 41, 45, 5, 20, 0, 0, 42, 45, 5, 21, 0, 0, 43, 45, 5, 22, 0, 0, 44, 40,
-		1, 0, 0, 0, 44, 41, 1, 0, 0, 0, 44, 42, 1, 0, 0, 0, 44, 43, 1, 0, 0, 0,
-		45, 9, 1, 0, 0, 0, 46, 47, 6, 5, -1, 0, 47, 57, 5, 18, 0, 0, 48, 57, 5,
-		23, 0, 0, 49, 57, 5, 24, 0, 0, 50, 57, 5, 25, 0, 0, 51, 57, 5, 26, 0, 0,
-		52, 53, 5, 6, 0, 0, 53, 54, 3, 10, 5, 0, 54, 55, 5, 7, 0, 0, 55, 57, 1,
-		0, 0, 0, 56, 46, 1, 0, 0, 0, 56, 48, 1, 0, 0, 0, 56, 49, 1, 0, 0, 0, 56,
-		50, 1, 0, 0, 0, 56, 51, 1, 0, 0, 0, 56, 52, 1, 0, 0, 0, 57, 69, 1, 0, 0,
-		0, 58, 59, 10, 9, 0, 0, 59, 60, 7, 0, 0, 0, 60, 68, 3, 10, 5, 10, 61, 62,
-		10, 8, 0, 0, 62, 63, 7, 1, 0, 0, 63, 68, 3, 10, 5, 9, 64, 65, 10, 7, 0,
-		0, 65, 66, 7, 2, 0, 0, 66, 68, 3, 10, 5, 8, 67, 58, 1, 0, 0, 0, 67, 61,
-		1, 0, 0, 0, 67, 64, 1, 0, 0, 0, 68, 71, 1, 0, 0, 0, 69, 67, 1, 0, 0, 0,
-		69, 70, 1, 0, 0, 0, 70, 11, 1, 0, 0, 0, 71, 69, 1, 0, 0, 0, 6, 27, 38,
-		44, 56, 67, 69,
+		5, 1, 5, 1, 5, 1, 5, 5, 5, 71, 8, 5, 10, 5, 12, 5, 74, 9, 5, 1, 5, 0, 1,
+		10, 6, 0, 2, 4, 6, 8, 10, 0, 4, 2, 0, 2, 3, 6, 6, 1, 0, 4, 5, 1, 0, 12,
+		16, 1, 0, 19, 20, 83, 0, 12, 1, 0, 0, 0, 2, 14, 1, 0, 0, 0, 4, 27, 1, 0,
+		0, 0, 6, 38, 1, 0, 0, 0, 8, 44, 1, 0, 0, 0, 10, 56, 1, 0, 0, 0, 12, 13,
+		3, 2, 1, 0, 13, 1, 1, 0, 0, 0, 14, 15, 3, 8, 4, 0, 15, 16, 5, 28, 0, 0,
+		16, 17, 5, 7, 0, 0, 17, 18, 5, 8, 0, 0, 18, 19, 5, 9, 0, 0, 19, 20, 3,
+		4, 2, 0, 20, 21, 5, 10, 0, 0, 21, 3, 1, 0, 0, 0, 22, 23, 3, 6, 3, 0, 23,
+		24, 5, 11, 0, 0, 24, 26, 1, 0, 0, 0, 25, 22, 1, 0, 0, 0, 26, 29, 1, 0,
+		0, 0, 27, 25, 1, 0, 0, 0, 27, 28, 1, 0, 0, 0, 28, 5, 1, 0, 0, 0, 29, 27,
+		1, 0, 0, 0, 30, 31, 5, 28, 0, 0, 31, 32, 5, 17, 0, 0, 32, 39, 3, 10, 5,
+		0, 33, 34, 3, 8, 4, 0, 34, 35, 5, 28, 0, 0, 35, 36, 5, 17, 0, 0, 36, 37,
+		3, 10, 5, 0, 37, 39, 1, 0, 0, 0, 38, 30, 1, 0, 0, 0, 38, 33, 1, 0, 0, 0,
+		39, 7, 1, 0, 0, 0, 40, 45, 5, 22, 0, 0, 41, 45, 5, 23, 0, 0, 42, 45, 5,
+		24, 0, 0, 43, 45, 5, 25, 0, 0, 44, 40, 1, 0, 0, 0, 44, 41, 1, 0, 0, 0,
+		44, 42, 1, 0, 0, 0, 44, 43, 1, 0, 0, 0, 45, 9, 1, 0, 0, 0, 46, 47, 6, 5,
+		-1, 0, 47, 57, 5, 21, 0, 0, 48, 57, 5, 26, 0, 0, 49, 57, 5, 27, 0, 0, 50,
+		57, 5, 28, 0, 0, 51, 57, 5, 29, 0, 0, 52, 53, 5, 7, 0, 0, 53, 54, 3, 10,
+		5, 0, 54, 55, 5, 8, 0, 0, 55, 57, 1, 0, 0, 0, 56, 46, 1, 0, 0, 0, 56, 48,
+		1, 0, 0, 0, 56, 49, 1, 0, 0, 0, 56, 50, 1, 0, 0, 0, 56, 51, 1, 0, 0, 0,
+		56, 52, 1, 0, 0, 0, 57, 72, 1, 0, 0, 0, 58, 59, 10, 10, 0, 0, 59, 60, 7,
+		0, 0, 0, 60, 71, 3, 10, 5, 11, 61, 62, 10, 9, 0, 0, 62, 63, 7, 1, 0, 0,
+		63, 71, 3, 10, 5, 10, 64, 65, 10, 8, 0, 0, 65, 66, 7, 2, 0, 0, 66, 71,
+		3, 10, 5, 9, 67, 68, 10, 7, 0, 0, 68, 69, 7, 3, 0, 0, 69, 71, 3, 10, 5,
+		8, 70, 58, 1, 0, 0, 0, 70, 61, 1, 0, 0, 0, 70, 64, 1, 0, 0, 0, 70, 67,
+		1, 0, 0, 0, 71, 74, 1, 0, 0, 0, 72, 70, 1, 0, 0, 0, 72, 73, 1, 0, 0, 0,
+		73, 11, 1, 0, 0, 0, 74, 72, 1, 0, 0, 0, 6, 27, 38, 44, 56, 70, 72,
 	}
 	deserializer := antlr.NewATNDeserializer(nil)
 	staticData.atn = deserializer.Deserialize(staticData.serializedATN)
@@ -123,27 +125,30 @@ const (
 	TinylangParserDIV                 = 3
 	TinylangParserADD                 = 4
 	TinylangParserSUB                 = 5
-	TinylangParserPARENTHESIS_OPEN    = 6
-	TinylangParserPARENTHESIS_CLOSE   = 7
-	TinylangParserCURLY_BRACKET_OPEN  = 8
-	TinylangParserCURLY_BRACKET_CLOSE = 9
-	TinylangParserSEMICOLON           = 10
-	TinylangParserEQUALS_TEST         = 11
-	TinylangParserGREATER_THAN        = 12
-	TinylangParserGREATER_OR_EQUALS   = 13
-	TinylangParserLESS_THAN           = 14
-	TinylangParserLESS_OR_EQUALS      = 15
-	TinylangParserEQUALS              = 16
-	TinylangParserCOMMA               = 17
-	TinylangParserNUMBER              = 18
-	TinylangParserTYPE_VOID           = 19
-	TinylangParserTYPE_INT            = 20
-	TinylangParserTYPE_STRING         = 21
-	TinylangParserTYPE_BOOLEAN        = 22
-	TinylangParserVALUE_TRUE          = 23
-	TinylangParserVALUE_FALSE         = 24
-	TinylangParserIDENT               = 25
-	TinylangParserSTRING              = 26
+	TinylangParserMOD                 = 6
+	TinylangParserPARENTHESIS_OPEN    = 7
+	TinylangParserPARENTHESIS_CLOSE   = 8
+	TinylangParserCURLY_BRACKET_OPEN  = 9
+	TinylangParserCURLY_BRACKET_CLOSE = 10
+	TinylangParserSEMICOLON           = 11
+	TinylangParserEQUALS_TEST         = 12
+	TinylangParserGREATER_THAN        = 13
+	TinylangParserGREATER_OR_EQUALS   = 14
+	TinylangParserLESS_THAN           = 15
+	TinylangParserLESS_OR_EQUALS      = 16
+	TinylangParserEQUALS              = 17
+	TinylangParserCOMMA               = 18
+	TinylangParserAND_TEST            = 19
+	TinylangParserOR_TEST             = 20
+	TinylangParserNUMBER              = 21
+	TinylangParserTYPE_VOID           = 22
+	TinylangParserTYPE_INT            = 23
+	TinylangParserTYPE_STRING         = 24
+	TinylangParserTYPE_BOOLEAN        = 25
+	TinylangParserVALUE_TRUE          = 26
+	TinylangParserVALUE_FALSE         = 27
+	TinylangParserIDENT               = 28
+	TinylangParserSTRING              = 29
 )
 
 // TinylangParser rules.
@@ -1465,6 +1470,10 @@ func (s *MulDivContext) DIV() antlr.TerminalNode {
 	return s.GetToken(TinylangParserDIV, 0)
 }
 
+func (s *MulDivContext) MOD() antlr.TerminalNode {
+	return s.GetToken(TinylangParserMOD, 0)
+}
+
 func (s *MulDivContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(TinylangListener); ok {
 		listenerT.EnterMulDiv(s)
@@ -1735,6 +1744,90 @@ func (s *FalseContext) ExitRule(listener antlr.ParseTreeListener) {
 	}
 }
 
+type AndOrContext struct {
+	*ExpressionContext
+	op antlr.Token
+}
+
+func NewAndOrContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *AndOrContext {
+	var p = new(AndOrContext)
+
+	p.ExpressionContext = NewEmptyExpressionContext()
+	p.parser = parser
+	p.CopyFrom(ctx.(*ExpressionContext))
+
+	return p
+}
+
+func (s *AndOrContext) GetOp() antlr.Token { return s.op }
+
+func (s *AndOrContext) SetOp(v antlr.Token) { s.op = v }
+
+func (s *AndOrContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *AndOrContext) AllExpression() []IExpressionContext {
+	children := s.GetChildren()
+	len := 0
+	for _, ctx := range children {
+		if _, ok := ctx.(IExpressionContext); ok {
+			len++
+		}
+	}
+
+	tst := make([]IExpressionContext, len)
+	i := 0
+	for _, ctx := range children {
+		if t, ok := ctx.(IExpressionContext); ok {
+			tst[i] = t.(IExpressionContext)
+			i++
+		}
+	}
+
+	return tst
+}
+
+func (s *AndOrContext) Expression(i int) IExpressionContext {
+	var t antlr.RuleContext
+	j := 0
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IExpressionContext); ok {
+			if j == i {
+				t = ctx.(antlr.RuleContext)
+				break
+			}
+			j++
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IExpressionContext)
+}
+
+func (s *AndOrContext) AND_TEST() antlr.TerminalNode {
+	return s.GetToken(TinylangParserAND_TEST, 0)
+}
+
+func (s *AndOrContext) OR_TEST() antlr.TerminalNode {
+	return s.GetToken(TinylangParserOR_TEST, 0)
+}
+
+func (s *AndOrContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(TinylangListener); ok {
+		listenerT.EnterAndOr(s)
+	}
+}
+
+func (s *AndOrContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(TinylangListener); ok {
+		listenerT.ExitAndOr(s)
+	}
+}
+
 type ExprIdentContext struct {
 	*ExpressionContext
 	e antlr.Token
@@ -1896,7 +1989,7 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 		panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
 	}
 	p.GetParserRuleContext().SetStop(p.GetTokenStream().LT(-1))
-	p.SetState(69)
+	p.SetState(72)
 	p.GetErrorHandler().Sync(p)
 	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 5, p.GetParserRuleContext())
 
@@ -1906,7 +1999,7 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 				p.TriggerExitRuleEvent()
 			}
 			_prevctx = localctx
-			p.SetState(67)
+			p.SetState(70)
 			p.GetErrorHandler().Sync(p)
 			switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 4, p.GetParserRuleContext()) {
 			case 1:
@@ -1914,8 +2007,8 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 				p.PushNewRecursionContext(localctx, _startState, TinylangParserRULE_expression)
 				p.SetState(58)
 
-				if !(p.Precpred(p.GetParserRuleContext(), 9)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 9)", ""))
+				if !(p.Precpred(p.GetParserRuleContext(), 10)) {
+					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 10)", ""))
 				}
 				{
 					p.SetState(59)
@@ -1926,7 +2019,7 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 
 					_la = p.GetTokenStream().LA(1)
 
-					if !(_la == TinylangParserMUL || _la == TinylangParserDIV) {
+					if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<TinylangParserMUL)|(1<<TinylangParserDIV)|(1<<TinylangParserMOD))) != 0) {
 						var _ri = p.GetErrorHandler().RecoverInline(p)
 
 						localctx.(*MulDivContext).op = _ri
@@ -1937,7 +2030,7 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 				}
 				{
 					p.SetState(60)
-					p.expression(10)
+					p.expression(11)
 				}
 
 			case 2:
@@ -1945,8 +2038,8 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 				p.PushNewRecursionContext(localctx, _startState, TinylangParserRULE_expression)
 				p.SetState(61)
 
-				if !(p.Precpred(p.GetParserRuleContext(), 8)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 8)", ""))
+				if !(p.Precpred(p.GetParserRuleContext(), 9)) {
+					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 9)", ""))
 				}
 				{
 					p.SetState(62)
@@ -1968,7 +2061,7 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 				}
 				{
 					p.SetState(63)
-					p.expression(9)
+					p.expression(10)
 				}
 
 			case 3:
@@ -1976,8 +2069,8 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 				p.PushNewRecursionContext(localctx, _startState, TinylangParserRULE_expression)
 				p.SetState(64)
 
-				if !(p.Precpred(p.GetParserRuleContext(), 7)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 7)", ""))
+				if !(p.Precpred(p.GetParserRuleContext(), 8)) {
+					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 8)", ""))
 				}
 				{
 					p.SetState(65)
@@ -1999,13 +2092,44 @@ func (p *TinylangParser) expression(_p int) (localctx IExpressionContext) {
 				}
 				{
 					p.SetState(66)
+					p.expression(9)
+				}
+
+			case 4:
+				localctx = NewAndOrContext(p, NewExpressionContext(p, _parentctx, _parentState))
+				p.PushNewRecursionContext(localctx, _startState, TinylangParserRULE_expression)
+				p.SetState(67)
+
+				if !(p.Precpred(p.GetParserRuleContext(), 7)) {
+					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 7)", ""))
+				}
+				{
+					p.SetState(68)
+
+					var _lt = p.GetTokenStream().LT(1)
+
+					localctx.(*AndOrContext).op = _lt
+
+					_la = p.GetTokenStream().LA(1)
+
+					if !(_la == TinylangParserAND_TEST || _la == TinylangParserOR_TEST) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
+
+						localctx.(*AndOrContext).op = _ri
+					} else {
+						p.GetErrorHandler().ReportMatch(p)
+						p.Consume()
+					}
+				}
+				{
+					p.SetState(69)
 					p.expression(8)
 				}
 
 			}
 
 		}
-		p.SetState(71)
+		p.SetState(74)
 		p.GetErrorHandler().Sync(p)
 		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 5, p.GetParserRuleContext())
 	}
@@ -2033,12 +2157,15 @@ func (p *TinylangParser) Expression_Sempred(localctx antlr.RuleContext, predInde
 
 	switch predIndex {
 	case 0:
-		return p.Precpred(p.GetParserRuleContext(), 9)
+		return p.Precpred(p.GetParserRuleContext(), 10)
 
 	case 1:
-		return p.Precpred(p.GetParserRuleContext(), 8)
+		return p.Precpred(p.GetParserRuleContext(), 9)
 
 	case 2:
+		return p.Precpred(p.GetParserRuleContext(), 8)
+
+	case 3:
 		return p.Precpred(p.GetParserRuleContext(), 7)
 
 	default:

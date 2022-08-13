@@ -59,6 +59,9 @@ type TinylangListener interface {
 	// EnterFalse is called when entering the False production.
 	EnterFalse(c *FalseContext)
 
+	// EnterAndOr is called when entering the AndOr production.
+	EnterAndOr(c *AndOrContext)
+
 	// EnterExprIdent is called when entering the ExprIdent production.
 	EnterExprIdent(c *ExprIdentContext)
 
@@ -112,6 +115,9 @@ type TinylangListener interface {
 
 	// ExitFalse is called when exiting the False production.
 	ExitFalse(c *FalseContext)
+
+	// ExitAndOr is called when exiting the AndOr production.
+	ExitAndOr(c *AndOrContext)
 
 	// ExitExprIdent is called when exiting the ExprIdent production.
 	ExitExprIdent(c *ExprIdentContext)

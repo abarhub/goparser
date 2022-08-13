@@ -61,6 +61,7 @@ const (
 	EXPR_CODE_SUB
 	EXPR_CODE_MUL
 	EXPR_CODE_DIV
+	EXPR_CODE_MOD
 	EXPR_CODE_STR
 	EXPR_CODE_LT
 	EXPR_CODE_LTE
@@ -69,7 +70,23 @@ const (
 	EXPR_CODE_EQU
 	EXPR_CODE_TRUE
 	EXPR_CODE_FALSE
+	EXPR_CODE_AND
+	EXPR_CODE_OR
 )
+
+var conv_operator = map[int]ExprCode{parser.TinylangParserMUL: EXPR_CODE_MUL,
+	parser.TinylangParserDIV:               EXPR_CODE_DIV,
+	parser.TinylangParserADD:               EXPR_CODE_ADD,
+	parser.TinylangParserSUB:               EXPR_CODE_SUB,
+	parser.TinylangParserMOD:               EXPR_CODE_MOD,
+	parser.TinylangParserEQUALS_TEST:       EXPR_CODE_EQU,
+	parser.TinylangParserGREATER_THAN:      EXPR_CODE_GT,
+	parser.TinylangParserGREATER_OR_EQUALS: EXPR_CODE_GTE,
+	parser.TinylangParserLESS_THAN:         EXPR_CODE_LT,
+	parser.TinylangParserLESS_OR_EQUALS:    EXPR_CODE_LTE,
+	parser.TinylangParserAND_TEST:          EXPR_CODE_AND,
+	parser.TinylangParserOR_TEST:           EXPR_CODE_OR,
+}
 
 type Expression struct {
 	code         ExprCode
@@ -141,9 +158,14 @@ func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
 	var code ExprCode
 	switch c.GetOp().GetTokenType() {
 	case parser.TinylangParserMUL:
-		code = EXPR_CODE_MUL
 	case parser.TinylangParserDIV:
-		code = EXPR_CODE_DIV
+	case parser.TinylangParserMOD:
+		value, ok := conv_operator[c.GetOp().GetTokenType()]
+		if ok {
+			code = value
+		} else {
+			panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
+		}
 	default:
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
@@ -167,9 +189,13 @@ func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
 	var code ExprCode
 	switch c.GetOp().GetTokenType() {
 	case parser.TinylangParserADD:
-		code = EXPR_CODE_ADD
 	case parser.TinylangParserSUB:
-		code = EXPR_CODE_SUB
+		value, ok := conv_operator[c.GetOp().GetTokenType()]
+		if ok {
+			code = value
+		} else {
+			panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
+		}
 	default:
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
@@ -183,15 +209,36 @@ func (l *calcListener) ExitCompare(c *parser.CompareContext) {
 	var code ExprCode
 	switch c.GetOp().GetTokenType() {
 	case parser.TinylangParserEQUALS_TEST:
-		code = EXPR_CODE_EQU
 	case parser.TinylangParserGREATER_THAN:
-		code = EXPR_CODE_GT
 	case parser.TinylangParserGREATER_OR_EQUALS:
-		code = EXPR_CODE_GTE
 	case parser.TinylangParserLESS_THAN:
-		code = EXPR_CODE_LT
 	case parser.TinylangParserLESS_OR_EQUALS:
-		code = EXPR_CODE_LTE
+		value, ok := conv_operator[c.GetOp().GetTokenType()]
+		if ok {
+			code = value
+		} else {
+			panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
+		}
+	default:
+		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
+	}
+	expr3 := Expression{code: code, left: expr, right: expr2, position: getPosition(c.GetOp())}
+	l.pushExpr(&expr3)
+}
+
+func (l *calcListener) ExitAndOr(c *parser.CompareContext) {
+	expr, expr2 := l.popExpr(), l.popExpr()
+
+	var code ExprCode
+	switch c.GetOp().GetTokenType() {
+	case parser.TinylangParserAND_TEST:
+	case parser.TinylangParserOR_TEST:
+		value, ok := conv_operator[c.GetOp().GetTokenType()]
+		if ok {
+			code = value
+		} else {
+			panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
+		}
 	default:
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
