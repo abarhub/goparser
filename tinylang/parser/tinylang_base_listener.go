@@ -75,6 +75,12 @@ func (s *BaseTinylangListener) EnterTypeBoolean(ctx *TypeBooleanContext) {}
 // ExitTypeBoolean is called when production TypeBoolean is exited.
 func (s *BaseTinylangListener) ExitTypeBoolean(ctx *TypeBooleanContext) {}
 
+// EnterNot is called when production Not is entered.
+func (s *BaseTinylangListener) EnterNot(ctx *NotContext) {}
+
+// ExitNot is called when production Not is exited.
+func (s *BaseTinylangListener) ExitNot(ctx *NotContext) {}
+
 // EnterParenthesis is called when production Parenthesis is entered.
 func (s *BaseTinylangListener) EnterParenthesis(ctx *ParenthesisContext) {}
 

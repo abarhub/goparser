@@ -55,7 +55,7 @@ func Parser(filename string, listener antlr.ParseTreeListener) error {
 	p.AddErrorListener(&errorListener)
 	tree := p.Start()
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	fmt.Println("res error:", errorListener)
+	//fmt.Println("res error:", errorListener)
 	if len(errorListener.errorMessage) == 0 {
 		return nil
 	} else {

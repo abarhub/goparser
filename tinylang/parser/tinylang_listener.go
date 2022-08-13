@@ -35,6 +35,9 @@ type TinylangListener interface {
 	// EnterTypeBoolean is called when entering the TypeBoolean production.
 	EnterTypeBoolean(c *TypeBooleanContext)
 
+	// EnterNot is called when entering the Not production.
+	EnterNot(c *NotContext)
+
 	// EnterParenthesis is called when entering the Parenthesis production.
 	EnterParenthesis(c *ParenthesisContext)
 
@@ -91,6 +94,9 @@ type TinylangListener interface {
 
 	// ExitTypeBoolean is called when exiting the TypeBoolean production.
 	ExitTypeBoolean(c *TypeBooleanContext)
+
+	// ExitNot is called when exiting the Not production.
+	ExitNot(c *NotContext)
 
 	// ExitParenthesis is called when exiting the Parenthesis production.
 	ExitParenthesis(c *ParenthesisContext)

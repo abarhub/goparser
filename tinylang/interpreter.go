@@ -37,7 +37,8 @@ func (interpreter *Interpreter) getIntValue(expression *Expression, symbolTable 
 		expression.code == EXPR_CODE_GT || expression.code == EXPR_CODE_GTE ||
 		expression.code == EXPR_CODE_MUL || expression.code == EXPR_CODE_DIV ||
 		expression.code == EXPR_CODE_MOD || expression.code == EXPR_CODE_AND ||
-		expression.code == EXPR_CODE_OR {
+		expression.code == EXPR_CODE_OR || expression.code == EXPR_CODE_NEQ ||
+		expression.code == EXPR_CODE_NOT {
 		val, err := interpreter.getIntValue(expression.left, symbolTable)
 		if err != nil {
 			return nil, fmt.Errorf("error: %s", err)
@@ -75,12 +76,16 @@ func (interpreter *Interpreter) getIntValue(expression *Expression, symbolTable 
 				return nil, fmt.Errorf("error: var is not int")
 			}
 		} else if expression.code == EXPR_CODE_EQU || expression.code == EXPR_CODE_LT || expression.code == EXPR_CODE_LTE ||
-			expression.code == EXPR_CODE_GT || expression.code == EXPR_CODE_GTE {
+			expression.code == EXPR_CODE_GT || expression.code == EXPR_CODE_GTE ||
+			expression.code == EXPR_CODE_NEQ {
 			if val.valeurtype.code == TYPE_INT && val2.valeurtype.code == TYPE_INT {
 				var val3 bool
 				switch expression.code {
 				case EXPR_CODE_EQU:
 					val3 = val.valeurInt == val2.valeurInt
+					break
+				case EXPR_CODE_NEQ:
+					val3 = val.valeurInt != val2.valeurInt
 					break
 				case EXPR_CODE_LT:
 					val3 = val.valeurInt < val2.valeurInt
@@ -118,8 +123,47 @@ func (interpreter *Interpreter) getIntValue(expression *Expression, symbolTable 
 			} else {
 				return nil, fmt.Errorf("error: var is not int")
 			}
+		} else if expression.code == EXPR_CODE_NOT {
+			if val.valeurtype.code == TYPE_BOOLEAN {
+				var val3 bool
+				switch expression.code {
+				case EXPR_CODE_NOT:
+					val3 = val.valeurBoolean
+					break
+				case EXPR_CODE_OR:
+					val3 = val.valeurBoolean || val2.valeurBoolean
+					break
+				default:
+					return nil, fmt.Errorf("error: invalid opertator")
+				}
+				return &Valeur{valeurtype: Type{code: TYPE_BOOLEAN}, valeurBoolean: val3}, nil
+			} else {
+				return nil, fmt.Errorf("error: var is not int")
+			}
 		} else {
-			return nil, fmt.Errorf("error: invalid opertator")
+			return nil, fmt.Errorf("error: invalid operator")
+		}
+	} else if expression.code == EXPR_CODE_NOT {
+		val, err := interpreter.getIntValue(expression.left, symbolTable)
+		if err != nil {
+			return nil, fmt.Errorf("error: %s", err)
+		}
+		if expression.code == EXPR_CODE_NOT {
+			if val.valeurtype.code == TYPE_BOOLEAN {
+				var val3 bool
+				switch expression.code {
+				case EXPR_CODE_NOT:
+					val3 = val.valeurBoolean
+					break
+				default:
+					return nil, fmt.Errorf("error: invalid opertator")
+				}
+				return &Valeur{valeurtype: Type{code: TYPE_BOOLEAN}, valeurBoolean: val3}, nil
+			} else {
+				return nil, fmt.Errorf("error: var is not boolean")
+			}
+		} else {
+			return nil, fmt.Errorf("error: invalid operator")
 		}
 	}
 

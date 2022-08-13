@@ -25,6 +25,7 @@ func TestChecker(t *testing.T) {
 	}{
 		{name: "test1", args: args{filename: "../test_data/sementic/ok/test1.txt"}, wantErr: false},
 		{name: "test2", args: args{filename: "../test_data/sementic/ok/test2.txt"}, wantErr: false},
+		{name: "test3", args: args{filename: "../test_data/sementic/ok/test3.txt"}, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

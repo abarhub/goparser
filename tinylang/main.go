@@ -68,10 +68,12 @@ const (
 	EXPR_CODE_GT
 	EXPR_CODE_GTE
 	EXPR_CODE_EQU
+	EXPR_CODE_NEQ
 	EXPR_CODE_TRUE
 	EXPR_CODE_FALSE
 	EXPR_CODE_AND
 	EXPR_CODE_OR
+	EXPR_CODE_NOT
 )
 
 var conv_operator = map[int]ExprCode{parser.TinylangParserMUL: EXPR_CODE_MUL,
@@ -80,12 +82,14 @@ var conv_operator = map[int]ExprCode{parser.TinylangParserMUL: EXPR_CODE_MUL,
 	parser.TinylangParserSUB:               EXPR_CODE_SUB,
 	parser.TinylangParserMOD:               EXPR_CODE_MOD,
 	parser.TinylangParserEQUALS_TEST:       EXPR_CODE_EQU,
+	parser.TinylangParserNOT_EQUALS_TEST:   EXPR_CODE_NEQ,
 	parser.TinylangParserGREATER_THAN:      EXPR_CODE_GT,
 	parser.TinylangParserGREATER_OR_EQUALS: EXPR_CODE_GTE,
 	parser.TinylangParserLESS_THAN:         EXPR_CODE_LT,
 	parser.TinylangParserLESS_OR_EQUALS:    EXPR_CODE_LTE,
 	parser.TinylangParserAND_TEST:          EXPR_CODE_AND,
 	parser.TinylangParserOR_TEST:           EXPR_CODE_OR,
+	parser.TinylangParserNOT_TEST:          EXPR_CODE_NOT,
 }
 
 type Expression struct {
@@ -209,6 +213,7 @@ func (l *calcListener) ExitCompare(c *parser.CompareContext) {
 	var code ExprCode
 	switch c.GetOp().GetTokenType() {
 	case parser.TinylangParserEQUALS_TEST:
+	case parser.TinylangParserNOT_EQUALS_TEST:
 	case parser.TinylangParserGREATER_THAN:
 	case parser.TinylangParserGREATER_OR_EQUALS:
 	case parser.TinylangParserLESS_THAN:
@@ -243,6 +248,25 @@ func (l *calcListener) ExitAndOr(c *parser.CompareContext) {
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
 	expr3 := Expression{code: code, left: expr, right: expr2, position: getPosition(c.GetOp())}
+	l.pushExpr(&expr3)
+}
+
+func (l *calcListener) ExitNot(c *parser.NotContext) {
+	expr := l.popExpr()
+
+	var code ExprCode
+	switch c.GetOp().GetTokenType() {
+	case parser.TinylangParserNOT_TEST:
+		value, ok := conv_operator[c.GetOp().GetTokenType()]
+		if ok {
+			code = value
+		} else {
+			panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
+		}
+	default:
+		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
+	}
+	expr3 := Expression{code: code, left: expr, position: getPosition(c.GetOp())}
 	l.pushExpr(&expr3)
 }
 

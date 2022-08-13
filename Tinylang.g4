@@ -4,6 +4,9 @@ grammar Tinylang;
 // Tokens
 WHITESPACE: [ \r\n\t]+ -> skip;
 
+LINE_COMMENT: '//' .*? '\r'? '\n' -> skip ;
+COMMENT: '/*' .*? '*/'  -> skip ;
+
 MUL: '*';
 DIV: '/';
 ADD: '+';
@@ -15,6 +18,7 @@ CURLY_BRACKET_OPEN: '{';
 CURLY_BRACKET_CLOSE: '}';
 SEMICOLON: ';';
 EQUALS_TEST: '==';
+NOT_EQUALS_TEST: '!=';
 GREATER_THAN: '>';
 GREATER_OR_EQUALS: '>=';
 LESS_THAN: '<';
@@ -23,6 +27,7 @@ EQUALS: '=';
 COMMA: ',';
 AND_TEST: '&&';
 OR_TEST: '||';
+NOT_TEST: '!';
 
 // number
 NUMBER: [0-9]+;
@@ -62,8 +67,9 @@ type : TYPE_VOID       # TypeVoid
 expression
    : expression op=('*'|'/'|'%') expression # MulDiv
    | expression op=('+'|'-') expression # AddSub
-   | expression op=('>'|'>='|'<'|'<='|'==') expression # Compare
+   | expression op=('>'|'>='|'<'|'<='|'=='|'!=') expression # Compare
    | expression op=('&&'|'||') expression # AndOr
+   | op='!' expression                  # Not
    | e=NUMBER                             # Number
    | e=VALUE_TRUE                                 # True
    | e=VALUE_FALSE                                 # False
