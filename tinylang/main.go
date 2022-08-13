@@ -100,6 +100,7 @@ type Expression struct {
 	left         *Expression
 	right        *Expression
 	position     *Position
+	returnType   *Type
 }
 
 type calcListener struct {
