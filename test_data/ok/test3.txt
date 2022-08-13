@@ -1,0 +1,17 @@
+void main () {
+    i=5;
+    x=i+9;
+    s="abc";
+    z=x*i-45/2;
+    t=true;
+    h=false;
+    m=x>1;
+    m=x>=1;
+    m=x<1;
+    m=x<=1;
+    m=x==1;
+    m=true && false;
+    m=true || false;
+    k=45 % 5;
+    n=(10+5)*4;
+}

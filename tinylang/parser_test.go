@@ -15,6 +15,7 @@ func TestParserOK(t *testing.T) {
 	}{
 		{name: "test1.txt", args: args{filename: "../test_data/ok/test1.txt"}, wantErr: false},
 		{name: "test2.txt", args: args{filename: "../test_data/ok/test2.txt"}, wantErr: false},
+		{name: "test3.txt", args: args{filename: "../test_data/ok/test3.txt"}, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
