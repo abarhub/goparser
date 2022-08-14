@@ -49,21 +49,11 @@ type calcListener struct {
 	functionList []*Function
 }
 
-func (l *calcListener) pushExpr(e *Expression) {
+func (l calcListener) pushExpr(e *Expression) {
 	l.stackExpr = append(l.stackExpr, e)
 }
 
-func (l *calcListener) ExitStart(c *parser.StartContext) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (l *calcListener) ExitParenthesis(c *parser.ParenthesisContext) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (l *calcListener) popExpr() *Expression {
+func (l calcListener) popExpr() *Expression {
 	if len(l.stackExpr) < 1 {
 		panic("stack is empty unable to pop")
 	}
@@ -77,15 +67,15 @@ func (l *calcListener) popExpr() *Expression {
 	return result
 }
 
-func (l *calcListener) pushInstr(e *Instruction) {
+func (l calcListener) pushInstr(e *Instruction) {
 	l.stackInstr = append(l.stackInstr, e)
 }
 
-func (l *calcListener) pushType(i *Type) {
+func (l calcListener) pushType(i *Type) {
 	l.stackType = append(l.stackType, i)
 }
 
-func (l *calcListener) popType() *Type {
+func (l calcListener) popType() *Type {
 	if len(l.stackType) < 1 {
 		panic("stack is empty unable to pop")
 	}
@@ -99,11 +89,11 @@ func (l *calcListener) popType() *Type {
 	return result
 }
 
-func (l *calcListener) addFunction(i *Function) {
+func (l calcListener) addFunction(i *Function) {
 	l.functionList = append(l.functionList, i)
 }
 
-func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
+func (l calcListener) ExitMulDiv(c *parser.MulDivContext) {
 	expr, expr2 := l.popExpr(), l.popExpr()
 
 	var code ExprCode
@@ -124,17 +114,17 @@ func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
 	l.pushExpr(&expr3)
 }
 
-func (l *calcListener) ExitTrue(c *parser.TrueContext) {
+func (l calcListener) ExitTrue(c *parser.TrueContext) {
 	expr := Expression{code: EXPR_CODE_TRUE, position: getPosition(c.GetStart())}
 	l.pushExpr(&expr)
 }
 
-func (l *calcListener) ExitFalse(c *parser.FalseContext) {
+func (l calcListener) ExitFalse(c *parser.FalseContext) {
 	expr := Expression{code: EXPR_CODE_FALSE, position: getPosition(c.GetStart())}
 	l.pushExpr(&expr)
 }
 
-func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
+func (l calcListener) ExitAddSub(c *parser.AddSubContext) {
 	expr, expr2 := l.popExpr(), l.popExpr()
 
 	var code ExprCode
@@ -154,7 +144,7 @@ func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
 	l.pushExpr(&expr3)
 }
 
-func (l *calcListener) ExitCompare(c *parser.CompareContext) {
+func (l calcListener) ExitCompare(c *parser.CompareContext) {
 	expr, expr2 := l.popExpr(), l.popExpr()
 
 	var code ExprCode
@@ -178,7 +168,7 @@ func (l *calcListener) ExitCompare(c *parser.CompareContext) {
 	l.pushExpr(&expr3)
 }
 
-func (l *calcListener) ExitAndOr(c *parser.CompareContext) {
+func (l calcListener) ExitAndOr(c *parser.AndOrContext) {
 	expr, expr2 := l.popExpr(), l.popExpr()
 
 	var code ExprCode
@@ -198,7 +188,7 @@ func (l *calcListener) ExitAndOr(c *parser.CompareContext) {
 	l.pushExpr(&expr3)
 }
 
-func (l *calcListener) ExitNot(c *parser.NotContext) {
+func (l calcListener) ExitNot(c *parser.NotContext) {
 	expr := l.popExpr()
 
 	var code ExprCode
@@ -217,7 +207,7 @@ func (l *calcListener) ExitNot(c *parser.NotContext) {
 	l.pushExpr(&expr3)
 }
 
-func (l *calcListener) ExitNumber(c *parser.NumberContext) {
+func (l calcListener) ExitNumber(c *parser.NumberContext) {
 	i, err := strconv.Atoi(c.GetText())
 	if err != nil {
 		panic(err.Error())
@@ -227,7 +217,7 @@ func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 	l.pushExpr(&expr)
 }
 
-func (l *calcListener) ExitExprIdent(c *parser.ExprIdentContext) {
+func (l calcListener) ExitExprIdent(c *parser.ExprIdentContext) {
 	name := c.GetText()
 	//fmt.Printf("ident: %v;%v;%v;%v;%v;%v;%v\n", name, c, c.GetStart(), c.GetStart().GetLine(), c.GetStart().GetColumn(), c.GetStart().GetStart(), c.GetStart().GetStop())
 	//position:=Position{line: c.GetStart().GetLine(),column: c.GetStart().GetColumn(),pos: c.GetStart().GetStart()}
@@ -235,7 +225,7 @@ func (l *calcListener) ExitExprIdent(c *parser.ExprIdentContext) {
 	l.pushExpr(&expr)
 }
 
-func (l *calcListener) ExitExprString(c *parser.ExprStringContext) {
+func (l calcListener) ExitExprString(c *parser.ExprStringContext) {
 	str := c.GetText()
 	str = str[1 : len(str)-1]
 	expr := Expression{code: EXPR_CODE_STR, valeurString: str, position: getPosition(c.GetStart())}
@@ -247,7 +237,7 @@ func getPosition(token antlr.Token) (position *Position) {
 	return
 }
 
-func (l *calcListener) ExitInstrAffect(c *parser.InstrAffectContext) {
+func (l calcListener) ExitInstrAffect(c *parser.InstrAffectContext) {
 	res3 := l.popExpr()
 	instr := Instruction{Code: INSTRUCTION_AFFECTATION, Variable: c.IDENT().GetText(),
 		Valeur: res3, position: getPosition(c.GetStart())}
@@ -255,23 +245,23 @@ func (l *calcListener) ExitInstrAffect(c *parser.InstrAffectContext) {
 	fmt.Println("affect", instr)
 }
 
-func (l *calcListener) EnterTypeVoid(c *parser.TypeVoidContext) {
+func (l calcListener) EnterTypeVoid(c *parser.TypeVoidContext) {
 	l.pushType(&Type{code: TYPE_VOID, position: getPosition(c.GetStart())})
 }
 
-func (l *calcListener) EnterTypeInt(c *parser.TypeIntContext) {
+func (l calcListener) EnterTypeInt(c *parser.TypeIntContext) {
 	l.pushType(&Type{code: TYPE_INT, position: getPosition(c.GetStart())})
 }
 
-func (l *calcListener) EnterTypeString(c *parser.TypeStringContext) {
+func (l calcListener) EnterTypeString(c *parser.TypeStringContext) {
 	l.pushType(&Type{code: TYPE_STRING, position: getPosition(c.GetStart())})
 }
 
-func (l *calcListener) EnterTypeBoolean(c *parser.TypeBooleanContext) {
+func (l calcListener) EnterTypeBoolean(c *parser.TypeBooleanContext) {
 	l.pushType(&Type{code: TYPE_BOOLEAN, position: getPosition(c.GetStart())})
 }
 
-func (l *calcListener) ExitFunct(c *parser.FunctContext) {
+func (l calcListener) ExitFunct(c *parser.FunctContext) {
 	res := c.GetChild(1)
 	typeReturn := l.popType()
 	funct := Function{Name: c.GetName().GetText(), Instruction: l.stackInstr,
@@ -279,6 +269,19 @@ func (l *calcListener) ExitFunct(c *parser.FunctContext) {
 	l.stackInstr = []*Instruction{}
 	l.addFunction(&funct)
 	fmt.Println("funct", res.GetPayload(), res.GetPayload(), funct)
+}
+
+func (l calcListener) EnterStartFunction(c *parser.StartFunctionContext) {
+	fmt.Printf("start2\n")
+}
+
+type TotoListener struct {
+	*parser.BaseTinylangListener
+	//parser.TinylangListener
+}
+
+func (l TotoListener) EnterStartFunction(c *parser.StartFunctionContext) {
+	fmt.Printf("start\n")
 }
 
 func Parser(filename string) ([]*Function, error) {
@@ -295,8 +298,19 @@ func Parser(filename string) ([]*Function, error) {
 	p.BuildParseTrees = true
 	p.AddErrorListener(&errorListener)
 	tree := p.Start()
-	var listener calcListener
+	var listener calcListener = calcListener{}
+	var tmp antlr.ParseTreeListener
+	//var totoListener TotoListener = TotoListener{}
+	tmp = listener
+	//tmp = totoListener
+	if listenerT, ok := tmp.(parser.TinylangListener); ok {
+		fmt.Println("type=true", listenerT)
+	} else {
+		fmt.Println("type=false", listenerT)
+	}
 	antlr.ParseTreeWalkerDefault.Walk(&listener, tree)
+	//antlr.ParseTreeWalkerDefault.Walk(tmp, tree)
+	//antlr.ParseTreeWalkerDefault.Walk(&totoListener, tree)
 	//fmt.Println("res error:", errorListener)
 	if len(errorListener.errorMessage) == 0 {
 		return listener.functionList, nil

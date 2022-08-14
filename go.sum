@@ -1,5 +1,7 @@
 github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20220804214150-8b0cc382067f h1:X02zleesrf1JEbRsNR+hmuCEijGXhcJboylwQ+6IeTw=
 github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20220804214150-8b0cc382067f/go.mod h1:F7bn7fEU90QkQ3tnmaTx3LTKLEDqnwWODIYppRQ5hnY=
+github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20220813173306-617d55f50263 h1:w3GJu0JTp+rfiAFYaYPCQ2eRs0z3T9b/pKqtsc10JXs=
+github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20220813173306-617d55f50263/go.mod h1:F7bn7fEU90QkQ3tnmaTx3LTKLEDqnwWODIYppRQ5hnY=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
