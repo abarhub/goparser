@@ -1,4 +1,4 @@
-// Code generated from Tinylang.g4 by ANTLR 4.10.1. DO NOT EDIT.
+// Code generated from C:/projet/goparser\Tinylang.g4 by ANTLR 4.10.1. DO NOT EDIT.
 
 package parser // Tinylang
 
@@ -39,20 +39,20 @@ func tinylangParserInit() {
 		"'true'", "'false'",
 	}
 	staticData.symbolicNames = []string{
-		"", "WHITESPACE", "LINE_COMMENT", "COMMENT", "MUL", "DIV", "ADD", "SUB",
+		"", "STRING", "LINE_COMMENT", "COMMENT", "MUL", "DIV", "ADD", "SUB",
 		"MOD", "PARENTHESIS_OPEN", "PARENTHESIS_CLOSE", "CURLY_BRACKET_OPEN",
 		"CURLY_BRACKET_CLOSE", "SEMICOLON", "EQUALS_TEST", "NOT_EQUALS_TEST",
 		"GREATER_THAN", "GREATER_OR_EQUALS", "LESS_THAN", "LESS_OR_EQUALS",
 		"EQUALS", "COMMA", "AND_TEST", "OR_TEST", "NOT_TEST", "NUMBER", "TYPE_VOID",
 		"TYPE_INT", "TYPE_STRING", "TYPE_BOOLEAN", "VALUE_TRUE", "VALUE_FALSE",
-		"IDENT", "STRING",
+		"IDENT", "WHITESPACE", "NEWLINE",
 	}
 	staticData.ruleNames = []string{
 		"start", "function", "instruction_list", "instruction", "type", "expression",
 	}
 	staticData.predictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
-		4, 1, 33, 78, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 1, 34, 78, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 2, 5, 7, 5, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 1, 2, 1, 2, 1, 2, 5, 2, 26, 8, 2, 10, 2, 12, 2, 29, 9, 2, 1, 3, 1, 3,
 		1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 3, 3, 39, 8, 3, 1, 4, 1, 4, 1, 4, 1,
@@ -75,7 +75,7 @@ func tinylangParserInit() {
 		41, 1, 0, 0, 0, 44, 42, 1, 0, 0, 0, 44, 43, 1, 0, 0, 0, 45, 9, 1, 0, 0,
 		0, 46, 47, 6, 5, -1, 0, 47, 48, 5, 24, 0, 0, 48, 59, 3, 10, 5, 7, 49, 59,
 		5, 25, 0, 0, 50, 59, 5, 30, 0, 0, 51, 59, 5, 31, 0, 0, 52, 59, 5, 32, 0,
-		0, 53, 59, 5, 33, 0, 0, 54, 55, 5, 9, 0, 0, 55, 56, 3, 10, 5, 0, 56, 57,
+		0, 53, 59, 5, 1, 0, 0, 54, 55, 5, 9, 0, 0, 55, 56, 3, 10, 5, 0, 56, 57,
 		5, 10, 0, 0, 57, 59, 1, 0, 0, 0, 58, 46, 1, 0, 0, 0, 58, 49, 1, 0, 0, 0,
 		58, 50, 1, 0, 0, 0, 58, 51, 1, 0, 0, 0, 58, 52, 1, 0, 0, 0, 58, 53, 1,
 		0, 0, 0, 58, 54, 1, 0, 0, 0, 59, 74, 1, 0, 0, 0, 60, 61, 10, 11, 0, 0,
@@ -124,7 +124,7 @@ func NewTinylangParser(input antlr.TokenStream) *TinylangParser {
 // TinylangParser tokens.
 const (
 	TinylangParserEOF                 = antlr.TokenEOF
-	TinylangParserWHITESPACE          = 1
+	TinylangParserSTRING              = 1
 	TinylangParserLINE_COMMENT        = 2
 	TinylangParserCOMMENT             = 3
 	TinylangParserMUL                 = 4
@@ -156,7 +156,8 @@ const (
 	TinylangParserVALUE_TRUE          = 30
 	TinylangParserVALUE_FALSE         = 31
 	TinylangParserIDENT               = 32
-	TinylangParserSTRING              = 33
+	TinylangParserWHITESPACE          = 33
+	TinylangParserNEWLINE             = 34
 )
 
 // TinylangParser rules.

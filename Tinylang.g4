@@ -2,9 +2,10 @@
 grammar Tinylang;
 
 // Tokens
-WHITESPACE: [ \r\n\t]+ -> skip;
 
-LINE_COMMENT: '//' .*? '\r'? '\n' -> skip ;
+STRING : '"' ~('"'|'\r'|'\n')* '"' ;
+
+LINE_COMMENT: '//' ~[\r\n]* -> skip ;
 COMMENT: '/*' .*? '*/'  -> skip ;
 
 MUL: '*';
@@ -41,7 +42,8 @@ VALUE_TRUE: 'true';
 VALUE_FALSE: 'false';
 IDENT: [a-zA-Z][a-zA-Z0-9_]*;
 
-STRING : '"' ~('"')* '"' ;
+WHITESPACE: [ \t]+ -> skip;
+NEWLINE:   ( '\r' '\n'? | '\n' ) -> skip ;
 
 // Rules
 start :  function                  # StartFunction

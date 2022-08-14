@@ -1,5 +1,1 @@
-void main () {
-    i=5;
-    x=i+9;
-    s="abc";
-}
+void main () { }

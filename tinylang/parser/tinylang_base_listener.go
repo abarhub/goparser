@@ -1,4 +1,4 @@
-// Code generated from Tinylang.g4 by ANTLR 4.10.1. DO NOT EDIT.
+// Code generated from C:/projet/goparser\Tinylang.g4 by ANTLR 4.10.1. DO NOT EDIT.
 
 package parser // Tinylang
 

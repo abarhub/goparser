@@ -5,12 +5,10 @@ import (
 )
 
 func runChecker(filename string) error {
-	var listener calcListener
-	err := Parser(filename, &listener)
+	functionList, err := Parser(filename)
 	if err != nil {
 		return err
 	}
-	functionList := listener.functionList
 	return Checker(functionList)
 }
 

@@ -21,9 +21,10 @@ func TestParserOK(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var listener calcListener
-			if err := Parser(tt.args.filename, listener); (err != nil) != tt.wantErr {
+			if functionList, err := Parser(tt.args.filename); (err != nil) != tt.wantErr {
 				t.Errorf("Parser() error = %v, wantErr %v", err, tt.wantErr)
+			} else if len(functionList) != 1 {
+				t.Errorf("Parser() nb function %d != 1", len(functionList))
 			}
 		})
 	}
@@ -43,8 +44,7 @@ func TestParserKO(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var listener calcListener
-			if err := Parser(tt.args.filename, listener); err == nil || err.Error() != tt.msgError {
+			if _, err := Parser(tt.args.filename); err == nil || err.Error() != tt.msgError {
 				if err == nil {
 					t.Errorf("Parser() error = %v, msgError %v!= error nil", err, tt.msgError)
 				} else {
