@@ -1,4 +1,4 @@
-// Code generated from C:/projet/goparser\Tinylang.g4 by ANTLR 4.10.1. DO NOT EDIT.
+// Code generated from Tinylang.g4 by ANTLR 4.10.1. DO NOT EDIT.
 
 package parser // Tinylang
 
@@ -50,6 +50,12 @@ func (s *BaseTinylangListener) EnterInstrDeclare(ctx *InstrDeclareContext) {}
 
 // ExitInstrDeclare is called when production InstrDeclare is exited.
 func (s *BaseTinylangListener) ExitInstrDeclare(ctx *InstrDeclareContext) {}
+
+// EnterInstrCall is called when production InstrCall is entered.
+func (s *BaseTinylangListener) EnterInstrCall(ctx *InstrCallContext) {}
+
+// ExitInstrCall is called when production InstrCall is exited.
+func (s *BaseTinylangListener) ExitInstrCall(ctx *InstrCallContext) {}
 
 // EnterTypeVoid is called when production TypeVoid is entered.
 func (s *BaseTinylangListener) EnterTypeVoid(ctx *TypeVoidContext) {}

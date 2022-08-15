@@ -1,1 +1,6 @@
-void main () { }
+void main () {
+    i=5;
+    x=i+9;
+    s="abc";
+    print(10,(12+68)*2,"def");
+}

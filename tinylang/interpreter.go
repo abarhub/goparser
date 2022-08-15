@@ -180,10 +180,14 @@ func (interpreter *Interpreter) interpreter() ([]map[string]Valeur, error) {
 				if err != nil {
 					return nil, fmt.Errorf("error: %s", err)
 				}
-				interpreter.printValue(val)
+				err = interpreter.printValue(val)
+				if err != nil {
+					return nil, err
+				}
 				symbolTable[instruction.Variable] = *val
 			} else if instruction.Code == INSTRUCTION_CALL {
 				fmt.Printf("%s(", instruction.FunctionName)
+				var param []*Valeur
 				for i, expr := range instruction.Parameter {
 					val, err := interpreter.getIntValue(expr, symbolTable)
 					if err != nil {
@@ -192,9 +196,24 @@ func (interpreter *Interpreter) interpreter() ([]map[string]Valeur, error) {
 					if i > 0 {
 						fmt.Printf(",")
 					}
-					interpreter.printValue(val)
+					param = append(param, val)
+					err = interpreter.printValue(val)
+					if err != nil {
+						return nil, err
+					}
 				}
-				fmt.Printf(")")
+				fmt.Printf("):")
+				if instruction.FunctionName == "print" {
+					for i, item := range param {
+						if i > 0 {
+							fmt.Printf(",")
+						}
+						err := interpreter.printValue(item)
+						if err != nil {
+							return nil, err
+						}
+					}
+				}
 			}
 			fmt.Printf("\n")
 		}

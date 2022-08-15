@@ -46,7 +46,7 @@ WHITESPACE: [ \t]+ -> skip;
 NEWLINE:   ( '\r' '\n'? | '\n' ) -> skip ;
 
 // Rules
-start :  function                  # StartFunction
+start :  function EOF                 # StartFunction
         ;
 
 
@@ -58,7 +58,11 @@ instruction_list: ( instruction SEMICOLON )*    # ListInstruction
 
 instruction: id=IDENT EQUALS exp=expression                        # InstrAffect
         |  t=type id=IDENT  EQUALS exp=expression                    # InstrDeclare
+        |  id=IDENT  PARENTHESIS_OPEN (exp=expression (COMMA exp2=expression)*)? PARENTHESIS_CLOSE       # InstrCall
         ;
+
+//instruction_call_param: exp=expression (COMMA exp2=expression)*
+//        ;
 
 type : TYPE_VOID       # TypeVoid
         | TYPE_INT     # TypeInt

@@ -43,12 +43,13 @@ func (c *customErrorListener) ReportContextSensitivity(recognizer antlr.Parser, 
 type calcListener struct {
 	*parser.BaseTinylangListener
 
-	stackExpr    []*Expression
-	stackInstr   []*Instruction
-	stackType    []*Type
-	functionList []*Function
-	startParsing bool
-	endParsing   bool
+	stackExpr            []*Expression
+	stackInstr           []*Instruction
+	stackType            []*Type
+	functionList         []*Function
+	startParsing         bool
+	endParsing           bool
+	nbStackExprEnterCall int
 }
 
 func (l *calcListener) pushExpr(e *Expression) {
@@ -243,6 +244,32 @@ func (l *calcListener) ExitInstrAffect(c *parser.InstrAffectContext) {
 	res3 := l.popExpr()
 	instr := Instruction{Code: INSTRUCTION_AFFECTATION, Variable: c.IDENT().GetText(),
 		Valeur: res3, position: getPosition(c.GetStart())}
+	l.pushInstr(&instr)
+	//fmt.Println("affect", instr)
+}
+
+func (l *calcListener) ExitInstrDeclare(c *parser.InstrDeclareContext) {
+	instr := Instruction{Code: INSTRUCTION_AFFECTATION, Variable: c.IDENT().GetText(),
+		Valeur: nil, position: getPosition(c.GetStart())}
+	l.pushInstr(&instr)
+	//fmt.Println("affect", instr)
+}
+
+func (l *calcListener) EnterInstrCall(c *parser.InstrCallContext) {
+	l.nbStackExprEnterCall = len(l.stackExpr)
+}
+
+func (l *calcListener) ExitInstrCall(c *parser.InstrCallContext) {
+	var parameter []*Expression
+	sizeStackExit := len(l.stackExpr)
+	if l.nbStackExprEnterCall >= 0 && l.nbStackExprEnterCall < sizeStackExit {
+		for i := 0; i < sizeStackExit-l.nbStackExprEnterCall; i++ {
+			parameter = append([]*Expression{l.popExpr()}, parameter...)
+		}
+	}
+	l.nbStackExprEnterCall = -1
+	instr := Instruction{Code: INSTRUCTION_CALL, FunctionName: c.IDENT().GetText(),
+		Parameter: parameter, position: getPosition(c.GetStart())}
 	l.pushInstr(&instr)
 	//fmt.Println("affect", instr)
 }

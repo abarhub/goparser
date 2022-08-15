@@ -1,4 +1,4 @@
-// Code generated from C:/projet/goparser\Tinylang.g4 by ANTLR 4.10.1. DO NOT EDIT.
+// Code generated from Tinylang.g4 by ANTLR 4.10.1. DO NOT EDIT.
 
 package parser // Tinylang
 
@@ -22,6 +22,9 @@ type TinylangListener interface {
 
 	// EnterInstrDeclare is called when entering the InstrDeclare production.
 	EnterInstrDeclare(c *InstrDeclareContext)
+
+	// EnterInstrCall is called when entering the InstrCall production.
+	EnterInstrCall(c *InstrCallContext)
 
 	// EnterTypeVoid is called when entering the TypeVoid production.
 	EnterTypeVoid(c *TypeVoidContext)
@@ -82,6 +85,9 @@ type TinylangListener interface {
 
 	// ExitInstrDeclare is called when exiting the InstrDeclare production.
 	ExitInstrDeclare(c *InstrDeclareContext)
+
+	// ExitInstrCall is called when exiting the InstrCall production.
+	ExitInstrCall(c *InstrCallContext)
 
 	// ExitTypeVoid is called when exiting the TypeVoid production.
 	ExitTypeVoid(c *TypeVoidContext)
