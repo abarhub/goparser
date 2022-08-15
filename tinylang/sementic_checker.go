@@ -7,12 +7,21 @@ var typeInt = Type{code: TYPE_INT}
 var typeString = Type{code: TYPE_STRING}
 var typeVoid = Type{code: TYPE_VOID}
 
+func showPosition(position *Position) string {
+	if position == nil {
+		return ""
+	} else {
+		return fmt.Sprintf("(line:%d, column:%d)", position.line, position.column)
+	}
+}
+
 func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Type, error) {
 	var val = expression
 	if val.code == EXPR_CODE_VAR {
 		variable := val.variable
 		if typeVar, ok := symbolTable[variable]; !ok {
-			return nil, fmt.Errorf("error: variable %s not declared", variable)
+			return nil, fmt.Errorf("error: variable %s not declared "+
+				showPosition(expression.position), variable)
 		} else {
 			expression.returnType = typeVar
 			return typeVar, nil
@@ -37,7 +46,8 @@ func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Typ
 		if err2 != nil {
 			return nil, err2
 		} else if typeLeft == nil {
-			return nil, fmt.Errorf("error: expression type left nil : %v", expression)
+			return nil, fmt.Errorf("error: expression type left nil : %v "+
+				showPosition(expression.position), expression)
 		}
 		typeRight, err2 := checkExpression(expression.right, symbolTable)
 		if err2 != nil {
@@ -52,7 +62,8 @@ func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Typ
 				expression.returnType = &typeInt
 				return &typeInt, nil
 			} else {
-				return nil, fmt.Errorf("error: operator '%v' need int parameters", expression.code)
+				return nil, fmt.Errorf("error: operator '%v' need int parameters "+
+					showPosition(expression.position), expression.code)
 			}
 		} else if expression.code == EXPR_CODE_LT ||
 			expression.code == EXPR_CODE_LTE || expression.code == EXPR_CODE_GT ||
@@ -61,14 +72,16 @@ func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Typ
 				expression.returnType = &typeBoolean
 				return &typeBoolean, nil
 			} else {
-				return nil, fmt.Errorf("error: operator '%v' need int parameters", expression.code)
+				return nil, fmt.Errorf("error: operator '%v' need int parameters "+
+					showPosition(expression.position), expression.code)
 			}
 		} else if expression.code == EXPR_CODE_AND || expression.code == EXPR_CODE_OR {
 			if typeLeft.code == TYPE_BOOLEAN && typeRight.code == TYPE_BOOLEAN {
 				expression.returnType = &typeBoolean
 				return &typeBoolean, nil
 			} else {
-				return nil, fmt.Errorf("error: operator '%v' need boolean parameters", expression.code)
+				return nil, fmt.Errorf("error: operator '%v' need boolean parameters "+
+					showPosition(expression.position), expression.code)
 			}
 		} else if expression.code == EXPR_CODE_EQU || expression.code == EXPR_CODE_NEQ {
 			if typeLeft.code == TYPE_BOOLEAN && typeRight.code == TYPE_BOOLEAN {
@@ -78,30 +91,36 @@ func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Typ
 				expression.returnType = &typeBoolean
 				return &typeBoolean, nil
 			} else {
-				return nil, fmt.Errorf("error: operator '%v' need boolean parameters", expression.code)
+				return nil, fmt.Errorf("error: operator '%v' need boolean parameters "+
+					showPosition(expression.position), expression.code)
 			}
 		} else {
-			return nil, fmt.Errorf("error: invalid operator '%v'", expression.code)
+			return nil, fmt.Errorf("error: invalid operator '%v' "+
+				showPosition(expression.position), expression.code)
 		}
 	} else if expression.code == EXPR_CODE_NOT {
 		typeLeft, err2 := checkExpression(expression.left, symbolTable)
 		if err2 != nil {
 			return nil, err2
 		} else if typeLeft == nil {
-			return nil, fmt.Errorf("error: expression type nil : %v", expression)
+			return nil, fmt.Errorf("error: expression type nil : %v "+
+				showPosition(expression.position), expression)
 		}
 		if expression.code == EXPR_CODE_NOT {
 			if typeLeft.code == TYPE_BOOLEAN {
 				expression.returnType = &typeBoolean
 				return &typeBoolean, nil
 			} else {
-				return nil, fmt.Errorf("error: operator '%v' need boolean parameter", expression.code)
+				return nil, fmt.Errorf("error: operator '%v' need boolean parameter "+
+					showPosition(expression.position), expression.code)
 			}
 		} else {
-			return nil, fmt.Errorf("error: invalid operator '%v'", expression.code)
+			return nil, fmt.Errorf("error: invalid operator '%v' "+
+				showPosition(expression.position), expression.code)
 		}
 	} else {
-		return nil, fmt.Errorf("error: expression unknow : %v", val)
+		return nil, fmt.Errorf("error: expression unknow : %v "+
+			showPosition(expression.position), val)
 	}
 }
 
@@ -122,24 +141,26 @@ func Checker(functionList []*Function) error {
 						return err
 					}
 				} else {
-					return fmt.Errorf("error: variable %s not affected", variable)
+					return fmt.Errorf("error: variable %s not affected "+
+						showPosition(instr.position), variable)
 				}
 
 				if typeVar == nil {
-					return fmt.Errorf("error: variable %s not affected", variable)
+					return fmt.Errorf("error: variable %s not affected "+showPosition(instr.position), variable)
 				}
 				if varTypeDeclared, ok := varDeclared[variable]; !ok {
 					varDeclared[variable] = typeVar
 				} else if varTypeDeclared.code != typeVar.code {
-					return fmt.Errorf("error: invalide type for variable %v (line:%d, column:%d)",
-						variable, instr.position.line, instr.position.column)
+					return fmt.Errorf("error: invalide type for variable %v "+
+						showPosition(instr.position), variable)
 				}
 			} else if instr.Valeur != nil {
 				var val = instr.Valeur
 				if val.code == EXPR_CODE_VAR {
 					variable := val.variable
 					if _, ok := varDeclared[variable]; !ok {
-						return fmt.Errorf("error: variable %s not declared", variable)
+						return fmt.Errorf("error: variable %s not declared "+
+							showPosition(instr.position), variable)
 					}
 				}
 			}

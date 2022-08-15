@@ -264,13 +264,13 @@ func (l *calcListener) EnterTypeBoolean(c *parser.TypeBooleanContext) {
 }
 
 func (l *calcListener) ExitFunct(c *parser.FunctContext) {
-	res := c.GetChild(1)
+	//res := c.GetChild(1)
 	typeReturn := l.popType()
 	funct := Function{Name: c.GetName().GetText(), Instruction: l.stackInstr,
 		ReturnType: *typeReturn, position: getPosition(c.GetStart())}
 	l.stackInstr = []*Instruction{}
 	l.addFunction(&funct)
-	fmt.Println("funct", res.GetPayload(), res.GetPayload(), funct)
+	//fmt.Println("funct", res.GetPayload(), res.GetPayload(), funct)
 }
 
 func (l *calcListener) EnterStartFunction(c *parser.StartFunctionContext) {
