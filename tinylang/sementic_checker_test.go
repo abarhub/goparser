@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -8,6 +9,8 @@ func runChecker(filename string) error {
 	functionList, err := Parser(filename)
 	if err != nil {
 		return err
+	} else if len(functionList) != 1 {
+		return fmt.Errorf("no function find in file")
 	}
 	return Checker(functionList)
 }

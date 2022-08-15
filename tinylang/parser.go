@@ -47,6 +47,8 @@ type calcListener struct {
 	stackInstr   []*Instruction
 	stackType    []*Type
 	functionList []*Function
+	startParsing bool
+	endParsing   bool
 }
 
 func (l *calcListener) pushExpr(e *Expression) {
@@ -94,13 +96,13 @@ func (l *calcListener) addFunction(i *Function) {
 }
 
 func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
-	expr, expr2 := l.popExpr(), l.popExpr()
+	expr2, expr := l.popExpr(), l.popExpr()
 
 	var code ExprCode
 	switch c.GetOp().GetTokenType() {
-	case parser.TinylangParserMUL:
-	case parser.TinylangParserDIV:
-	case parser.TinylangParserMOD:
+	case parser.TinylangParserMUL,
+		parser.TinylangParserDIV,
+		parser.TinylangParserMOD:
 		value, ok := conv_operator[c.GetOp().GetTokenType()]
 		if ok {
 			code = value
@@ -125,12 +127,12 @@ func (l *calcListener) ExitFalse(c *parser.FalseContext) {
 }
 
 func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
-	expr, expr2 := l.popExpr(), l.popExpr()
+	expr2, expr := l.popExpr(), l.popExpr()
 
 	var code ExprCode
 	switch c.GetOp().GetTokenType() {
-	case parser.TinylangParserADD:
-	case parser.TinylangParserSUB:
+	case parser.TinylangParserADD,
+		parser.TinylangParserSUB:
 		value, ok := conv_operator[c.GetOp().GetTokenType()]
 		if ok {
 			code = value
@@ -145,16 +147,16 @@ func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
 }
 
 func (l *calcListener) ExitCompare(c *parser.CompareContext) {
-	expr, expr2 := l.popExpr(), l.popExpr()
+	expr2, expr := l.popExpr(), l.popExpr()
 
 	var code ExprCode
 	switch c.GetOp().GetTokenType() {
-	case parser.TinylangParserEQUALS_TEST:
-	case parser.TinylangParserNOT_EQUALS_TEST:
-	case parser.TinylangParserGREATER_THAN:
-	case parser.TinylangParserGREATER_OR_EQUALS:
-	case parser.TinylangParserLESS_THAN:
-	case parser.TinylangParserLESS_OR_EQUALS:
+	case parser.TinylangParserEQUALS_TEST,
+		parser.TinylangParserNOT_EQUALS_TEST,
+		parser.TinylangParserGREATER_THAN,
+		parser.TinylangParserGREATER_OR_EQUALS,
+		parser.TinylangParserLESS_THAN,
+		parser.TinylangParserLESS_OR_EQUALS:
 		value, ok := conv_operator[c.GetOp().GetTokenType()]
 		if ok {
 			code = value
@@ -169,12 +171,12 @@ func (l *calcListener) ExitCompare(c *parser.CompareContext) {
 }
 
 func (l *calcListener) ExitAndOr(c *parser.AndOrContext) {
-	expr, expr2 := l.popExpr(), l.popExpr()
+	expr2, expr := l.popExpr(), l.popExpr()
 
 	var code ExprCode
 	switch c.GetOp().GetTokenType() {
-	case parser.TinylangParserAND_TEST:
-	case parser.TinylangParserOR_TEST:
+	case parser.TinylangParserAND_TEST,
+		parser.TinylangParserOR_TEST:
 		value, ok := conv_operator[c.GetOp().GetTokenType()]
 		if ok {
 			code = value
@@ -272,7 +274,13 @@ func (l *calcListener) ExitFunct(c *parser.FunctContext) {
 }
 
 func (l *calcListener) EnterStartFunction(c *parser.StartFunctionContext) {
-	fmt.Printf("start2\n")
+	//fmt.Printf("start2\n")
+	l.startParsing = true
+}
+
+func (l *calcListener) ExitStartFunction(c *parser.StartFunctionContext) {
+	//fmt.Printf("end2\n")
+	l.endParsing = true
 }
 
 //type TotoListener struct {
@@ -299,20 +307,23 @@ func Parser(filename string) ([]*Function, error) {
 	p.AddErrorListener(&errorListener)
 	tree := p.Start()
 	var listener calcListener = calcListener{}
-	var tmp antlr.ParseTreeListener
+	//var tmp antlr.ParseTreeListener
 	//var totoListener TotoListener = TotoListener{}
-	tmp = listener
+	//tmp = listener
 	//tmp = totoListener
-	if listenerT, ok := tmp.(parser.TinylangListener); ok {
-		fmt.Println("type=true", listenerT)
-	} else {
-		fmt.Println("type=false", listenerT)
-		//panic("Error with listener")
-	}
+	//if listenerT, ok := tmp.(parser.TinylangListener); ok {
+	//	fmt.Println("type=true", listenerT)
+	//} else {
+	//	fmt.Println("type=false", listenerT)
+	//	//panic("Error with listener")
+	//}
 	antlr.ParseTreeWalkerDefault.Walk(&listener, tree)
 	//antlr.ParseTreeWalkerDefault.Walk(tmp, tree)
 	//antlr.ParseTreeWalkerDefault.Walk(&totoListener, tree)
 	//fmt.Println("res error:", errorListener)
+	if !listener.startParsing || !listener.endParsing {
+		return nil, fmt.Errorf("parser invalid")
+	}
 	if len(errorListener.errorMessage) == 0 {
 		return listener.functionList, nil
 	} else {

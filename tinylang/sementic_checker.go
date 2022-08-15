@@ -54,11 +54,27 @@ func checkExpression(expression *Expression, symbolTable map[string]*Type) (*Typ
 			} else {
 				return nil, fmt.Errorf("error: operator '%v' need int parameters", expression.code)
 			}
-		} else if expression.code == EXPR_CODE_EQU || expression.code == EXPR_CODE_LT ||
+		} else if expression.code == EXPR_CODE_LT ||
 			expression.code == EXPR_CODE_LTE || expression.code == EXPR_CODE_GT ||
-			expression.code == EXPR_CODE_GTE || expression.code == EXPR_CODE_AND ||
-			expression.code == EXPR_CODE_OR {
+			expression.code == EXPR_CODE_GTE {
+			if typeLeft.code == TYPE_INT && typeRight.code == TYPE_INT {
+				expression.returnType = &typeBoolean
+				return &typeBoolean, nil
+			} else {
+				return nil, fmt.Errorf("error: operator '%v' need int parameters", expression.code)
+			}
+		} else if expression.code == EXPR_CODE_AND || expression.code == EXPR_CODE_OR {
 			if typeLeft.code == TYPE_BOOLEAN && typeRight.code == TYPE_BOOLEAN {
+				expression.returnType = &typeBoolean
+				return &typeBoolean, nil
+			} else {
+				return nil, fmt.Errorf("error: operator '%v' need boolean parameters", expression.code)
+			}
+		} else if expression.code == EXPR_CODE_EQU || expression.code == EXPR_CODE_NEQ {
+			if typeLeft.code == TYPE_BOOLEAN && typeRight.code == TYPE_BOOLEAN {
+				expression.returnType = &typeBoolean
+				return &typeBoolean, nil
+			} else if typeLeft.code == TYPE_INT && typeRight.code == TYPE_INT {
 				expression.returnType = &typeBoolean
 				return &typeBoolean, nil
 			} else {
@@ -115,7 +131,8 @@ func Checker(functionList []*Function) error {
 				if varTypeDeclared, ok := varDeclared[variable]; !ok {
 					varDeclared[variable] = typeVar
 				} else if varTypeDeclared.code != typeVar.code {
-					return fmt.Errorf("error: invalide type for variable %v", variable)
+					return fmt.Errorf("error: invalide type for variable %v (line:%d, column:%d)",
+						variable, instr.position.line, instr.position.column)
 				}
 			} else if instr.Valeur != nil {
 				var val = instr.Valeur
